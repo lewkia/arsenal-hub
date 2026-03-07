@@ -991,26 +991,42 @@
     const ARSENAL_ID = 57;  // Arsenal FC team ID on football-data.org
     const HEADERS    = { 'X-Auth-Token': API_KEY };
 
-    // CORS proxy — required when the page is opened as a local file://.
-    // The browser sends a null Origin in that case, which football-data.org
-    // (and most APIs) reject. corsproxy.io forwards all request headers,
-    // including X-Auth-Token, to the target server.
+    // CORS proxy — only used as a fallback when the direct fetch fails with a
+    // network/CORS error (e.g. when the page is opened as a local file://).
+    // On any proper HTTP/HTTPS origin (Vercel, localhost server, etc.) the
+    // direct fetch works fine and the proxy is never invoked.
     const CORS_PROXY = 'https://corsproxy.io/?url=';
 
-    // Wrapper for all football-data.org requests
+    // Wrapper for all football-data.org requests.
+    // Strategy: try direct → on TypeError (CORS/network blocked) retry via proxy.
     async function apiFetch(path) {
       const target = `${API_BASE}${path}`;
-      const res = await fetch(`${CORS_PROXY}${encodeURIComponent(target)}`, { headers: HEADERS });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
+      try {
+        const res = await fetch(target, { headers: HEADERS });
+        if (res.ok) return res.json();
+        throw new Error(`HTTP ${res.status}`);   // real API error — don't proxy
+      } catch (e) {
+        if (!(e instanceof TypeError)) throw e;  // not a network/CORS error
+        // Fallback: route through CORS proxy (handles file:// null-origin)
+        const res = await fetch(`${CORS_PROXY}${encodeURIComponent(target)}`, { headers: HEADERS });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      }
     }
 
-    // Wrapper for rss2json news fetches (also needs the proxy under file://)
+    // Wrapper for rss2json news fetches — same direct-first strategy.
     async function rssFetch(feedUrl) {
       const target = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
-      const res = await fetch(`${CORS_PROXY}${encodeURIComponent(target)}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
+      try {
+        const res = await fetch(target);
+        if (res.ok) return res.json();
+        throw new Error(`HTTP ${res.status}`);
+      } catch (e) {
+        if (!(e instanceof TypeError)) throw e;
+        const res = await fetch(`${CORS_PROXY}${encodeURIComponent(target)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      }
     }
 
     // Competition display info: short name + badge colour
