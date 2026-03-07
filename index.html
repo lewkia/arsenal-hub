@@ -72,7 +72,7 @@
       gap: 1rem;
     }
 
-    .header-icon { font-size: 2rem; flex-shrink: 0; }
+    .header-icon { width: 44px; height: 44px; object-fit: contain; flex-shrink: 0; }
 
     .header-brand { flex: 1; text-align: center; }
 
@@ -859,7 +859,7 @@
   ================================================================ -->
   <header class="site-header">
     <div class="header-inner">
-      <span class="header-icon">&#x26BD;</span>
+      <img src="https://crests.football-data.org/57.png" alt="Arsenal FC" class="header-icon">
       <div class="header-brand">
         <h1 class="site-title">The Arsenal Hub By Polla</h1>
         <p class="site-subtitle">Come On You Gunners &#128308;&#9899;</p>
@@ -1582,7 +1582,7 @@
     // ================================================================
     async function initAll() {
       const btn = document.getElementById('refresh-btn');
-      btn.textContent = '&#8635; Loading\u2026';
+      btn.textContent = '\u21BB Loading\u2026';
       btn.disabled = true;
 
       await Promise.allSettled([
@@ -1594,7 +1594,7 @@
         loadNews(),
       ]);
 
-      btn.textContent = '&#8635; Refresh';
+      btn.textContent = '\u21BB Refresh';
       btn.disabled = false;
     }
 
