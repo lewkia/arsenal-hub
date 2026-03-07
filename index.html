@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Arsenal Hub By Polla - Your ultimate Arsenal FC fan hub">
+  <meta name="theme-color" content="#EF0107">
+  <title>The Arsenal Hub By Polla</title>
+  <!-- Favicon: football emoji as SVG -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x26BD;</text></svg>">
+
+  <style>
+    /* ============================================================
+       RESET & CSS VARIABLES
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:          #1a1a2e;
+      --bg-card:     #16213e;
+      --bg-card-alt: #0f3460;
+      --red:         #EF0107;
+      --red-dark:    #b30005;
+      --red-glow:    rgba(239,1,7,0.15);
+      --white:       #ffffff;
+      --secondary:   #aaaaaa;
+      --border:      rgba(255,255,255,0.08);
+      --win:         #22c55e;
+      --draw:        #eab308;
+      --loss:        #ef4444;
+      --radius:      12px;
+      --shadow:      0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                   'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img  { display: block; max-width: 100%; }
+    a    { text-decoration: none; color: inherit; }
+
+    /* ============================================================
+       SITE HEADER (sticky)
+    ============================================================ */
+    .site-header {
+      background: linear-gradient(180deg, #090914 0%, #12122a 100%);
+      border-bottom: 3px solid var(--red);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .header-icon { font-size: 2rem; flex-shrink: 0; }
+
+    .header-brand { flex: 1; text-align: center; }
+
+    .site-title {
+      font-size: clamp(1rem, 3.5vw, 1.8rem);
+      font-weight: 900;
+      color: var(--red);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.15;
+    }
+
+    .site-subtitle {
+      font-size: 0.82rem;
+      color: var(--secondary);
+      margin-top: 0.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* Refresh button */
+    .refresh-btn {
+      flex-shrink: 0;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .refresh-btn:hover  { background: var(--red-dark); }
+    .refresh-btn:active { transform: scale(0.96); }
+    .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ============================================================
+       MAIN LAYOUT
+    ============================================================ */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    /* ============================================================
+       SECTION WRAPPER
+    ============================================================ */
+    .section { margin-bottom: 2.5rem; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Red left-bar accent */
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 1.1rem;
+      background: var(--red);
+      border-radius: 2px;
+    }
+
+    /* ============================================================
+       LOADING SPINNER
+    ============================================================ */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 1rem;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(239,1,7,0.2);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ============================================================
+       MESSAGES
+    ============================================================ */
+    .error-msg {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .info-msg {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--secondary);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    /* ============================================================
+       COMPETITION BADGE
+    ============================================================ */
+    .comp-badge {
+      display: inline-block;
+      padding: 0.18rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       SECTION 1 — NEXT MATCH HERO
+    ============================================================ */
+    .next-match-card {
+      background: linear-gradient(135deg, var(--bg-card) 0%, #1a2a50 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.75rem 1.25rem 1.5rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Red top stripe */
+    .next-match-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: var(--red);
+    }
+
+    /* Teams row */
+    .nm-teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .nm-team {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    .nm-crest {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
+
+    .nm-team-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .nm-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+      min-width: 110px;
+    }
+
+    .nm-vs {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--red);
+    }
+
+    .nm-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .nm-date { font-size: 0.78rem; color: var(--secondary); }
+    .nm-time { font-size: 1rem; font-weight: 800; color: var(--red); }
+    .nm-venue { font-size: 0.72rem; color: var(--secondary); }
+
+    /* Countdown */
+    .countdown-section {
+      border-top: 1px solid var(--border);
+      padding-top: 1.25rem;
+      text-align: center;
+    }
+
+    .cd-label {
+      font-size: 0.72rem;
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .cd-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 56px;
+    }
+
+    .cd-num {
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 900;
+      color: var(--red);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cd-text {
+      font-size: 0.6rem;
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.2rem;
+    }
+
+    .cd-sep {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--red);
+      opacity: 0.45;
+      margin-bottom: 1.1rem;
+    }
+
+    .live-badge {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      padding: 0.4rem 1.25rem;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      animation: blink 1.2s ease infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.55} }
+
+    /* ============================================================
+       SECTION 2 — EPL STANDINGS
+    ============================================================ */
+    .top4-gap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.85rem;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .top4-gap.in-top4 {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #86efac;
+    }
+
+    .top4-gap.out-top4 {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+
+    .standings-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 380px;
+    }
+
+    .standings-table thead th {
+      background: rgba(239,1,7,0.12);
+      color: var(--secondary);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.65rem 0.4rem;
+      text-align: center;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .standings-table thead th.left { text-align: left; padding-left: 0.75rem; }
+
+    .standings-table tbody td {
+      padding: 0.5rem 0.4rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.83rem;
+      vertical-align: middle;
+    }
+
+    .standings-table tbody td.left { text-align: left; padding-left: 0.75rem; }
+
+    .standings-table tbody tr:last-child td { border-bottom: none; }
+    .standings-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+
+    /* Arsenal row highlight */
+    .arsenal-row {
+      background: rgba(239,1,7,0.09) !important;
+      border-left: 3px solid var(--red);
+    }
+    .arsenal-row td { font-weight: 800 !important; }
+
+    /* Zone dividers */
+    .zone-ucl  td { border-bottom: 2px solid rgba(96,165,250,0.5) !important; }
+    .zone-uel  td { border-bottom: 2px solid rgba(251,146,60,0.5) !important; }
+    .zone-rel  td { border-bottom: 2px solid rgba(248,113,113,0.5) !important; }
+
+    /* Position number colour coding */
+    .pos-ucl { color: #60a5fa; font-weight: 800; }
+    .pos-uel { color: #fb923c; font-weight: 800; }
+    .pos-rel { color: #f87171; font-weight: 800; }
+
+    .table-crest {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 0.4rem;
+    }
+
+    .team-cell {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    /* Form badges */
+    .form-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 19px;
+      height: 19px;
+      border-radius: 4px;
+      font-size: 0.62rem;
+      font-weight: 800;
+      margin: 0 1px;
+    }
+    .fw { background: var(--win);  color: #fff; }
+    .fd { background: var(--draw); color: #1a1a2e; }
+    .fl { background: var(--loss); color: #fff; }
+
+    .form-col { white-space: nowrap; }
+
+    /* Zone legend */
+    .zone-legend {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-top: 0.6rem;
+    }
+    .zone-legend span {
+      font-size: 0.72rem;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .zone-legend .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       SECTION 3 — FIXTURES
+    ============================================================ */
+    .fixtures-grid {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .fixture-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1.1rem;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .fixture-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: rgba(239,1,7,0.25);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .card-date {
+      font-size: 0.78rem;
+      color: var(--secondary);
+      flex: 1;
+    }
+
+    .card-teams {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-team {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .card-team.right {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+
+    .card-crest {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .card-vs {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--secondary);
+      padding: 0 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .card-venue {
+      font-size: 0.72rem;
+      color: var(--secondary);
+      margin-top: 0.45rem;
+    }
+
+    .arsenal-name { color: var(--red) !important; }
+
+    /* ============================================================
+       SECTION 4 — RESULTS
+    ============================================================ */
+    .results-grid { display: grid; gap: 0.75rem; }
+
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid transparent;
+      border-radius: var(--radius);
+      padding: 0.9rem 1.1rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .result-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+    .result-card.win  { border-left-color: var(--win); }
+    .result-card.draw { border-left-color: var(--draw); }
+    .result-card.loss { border-left-color: var(--loss); }
+
+    .result-badge {
+      padding: 0.18rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+    .result-badge.win  { background: var(--win);  color: #fff; }
+    .result-badge.draw { background: var(--draw); color: #1a1a2e; }
+    .result-badge.loss { background: var(--loss); color: #fff; }
+
+    .result-score {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--white);
+      padding: 0 0.6rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       SECTIONS 5 & 6 — SCORERS / ASSISTS (2-col grid)
+    ============================================================ */
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .scorers-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .scorers-card.arsenal-card {
+      border-color: rgba(239,1,7,0.3);
+    }
+
+    .scorers-card-title {
+      background: rgba(239,1,7,0.12);
+      padding: 0.65rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .arsenal-card .scorers-card-title {
+      background: rgba(239,1,7,0.22);
+    }
+
+    .scorers-list { padding: 0.35rem; }
+
+    .scorer-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .scorer-row:hover { background: rgba(255,255,255,0.04); }
+    .scorer-row.is-arsenal {
+      background: rgba(239,1,7,0.08);
+    }
+    .scorer-row.is-arsenal:hover { background: rgba(239,1,7,0.13); }
+
+    .scorer-rank {
+      font-size: 0.72rem;
+      color: var(--secondary);
+      font-weight: 700;
+      min-width: 1.4rem;
+      text-align: center;
+    }
+
+    .scorer-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.08rem;
+    }
+
+    .scorer-name {
+      font-size: 0.87rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .scorer-sub {
+      font-size: 0.7rem;
+      color: var(--secondary);
+    }
+
+    .scorer-stat {
+      font-size: 0.88rem;
+      font-weight: 800;
+      white-space: nowrap;
+      color: var(--white);
+    }
+
+    .no-data {
+      text-align: center;
+      color: var(--secondary);
+      padding: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    /* ============================================================
+       SECTION 7 — NEWS FEED
+    ============================================================ */
+    .newsnow-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      color: var(--white);
+      padding: 0.38rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .newsnow-btn:hover { background: rgba(255,255,255,0.12); }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .news-card {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+    .news-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: rgba(239,1,7,0.25);
+    }
+
+    .news-thumb {
+      width: 90px;
+      min-width: 90px;
+      min-height: 75px;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(255,255,255,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .news-body {
+      flex: 1;
+      padding: 0.65rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 0;
+    }
+
+    .news-source {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .news-title {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .news-date {
+      font-size: 0.68rem;
+      color: var(--secondary);
+      margin-top: auto;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: rgba(0,0,0,0.35);
+      border-top: 1px solid var(--border);
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .footer-text { color: var(--secondary); font-size: 0.85rem; }
+
+    .whatsapp-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #25d366;
+      color: #fff;
+      padding: 0.6rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .whatsapp-btn:hover  { background: #1ebe5a; }
+    .whatsapp-btn:active { transform: scale(0.97); }
+
+    /* ============================================================
+       RESPONSIVE — TABLET (>= 600px)
+    ============================================================ */
+    @media (min-width: 600px) {
+      .fixtures-grid { grid-template-columns: 1fr 1fr; }
+      .results-grid  { grid-template-columns: 1fr 1fr; }
+      .news-grid     { grid-template-columns: 1fr 1fr; }
+      .nm-crest      { width: 72px; height: 72px; }
+    }
+
+    /* ============================================================
+       RESPONSIVE — DESKTOP (>= 900px)
+    ============================================================ */
+    @media (min-width: 900px) {
+      .two-col-grid  { grid-template-columns: 1fr 1fr; }
+      .news-grid     { grid-template-columns: 1fr 1fr 1fr; }
+      .fixtures-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (min-width: 1100px) {
+      .news-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* Hide columns on small screens */
+    @media (max-width: 599px) {
+      .hide-sm { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================================================================
+       SITE HEADER
+  ================================================================ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="header-icon">&#x26BD;</span>
+      <div class="header-brand">
+        <h1 class="site-title">The Arsenal Hub By Polla</h1>
+        <p class="site-subtitle">Come On You Gunners &#128308;&#9899;</p>
+      </div>
+      <button class="refresh-btn" id="refresh-btn">&#8635; Refresh</button>
+    </div>
+  </header>
+
+  <!-- ================================================================
+       MAIN CONTENT
+  ================================================================ -->
+  <main>
+
+    <!-- -------------------------------------------------------
+         SECTION 1: NEXT MATCH + COUNTDOWN
+    ------------------------------------------------------- -->
+    <section class="section" id="s-next-match">
+      <div class="section-header">
+        <h2 class="section-title">Next Match</h2>
+      </div>
+      <div id="next-match-container">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------
+         SECTION 2: EPL STANDINGS
+    ------------------------------------------------------- -->
+    <section class="section" id="s-standings">
+      <div class="section-header">
+        <h2 class="section-title">Premier League Table</h2>
+      </div>
+      <div id="standings-container">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------
+         SECTION 3: UPCOMING FIXTURES
+    ------------------------------------------------------- -->
+    <section class="section" id="s-fixtures">
+      <div class="section-header">
+        <h2 class="section-title">Upcoming Fixtures</h2>
+      </div>
+      <div id="fixtures-container">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------
+         SECTION 4: RECENT RESULTS
+    ------------------------------------------------------- -->
+    <section class="section" id="s-results">
+      <div class="section-header">
+        <h2 class="section-title">Recent Results</h2>
+      </div>
+      <div id="results-container">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------
+         SECTION 5: TOP SCORERS (EPL + Arsenal, 2 col)
+    ------------------------------------------------------- -->
+    <section class="section" id="s-scorers">
+      <div class="section-header">
+        <h2 class="section-title">Top Scorers</h2>
+      </div>
+      <div class="two-col-grid" id="scorers-container">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------
+         SECTION 6: TOP ASSISTS (EPL + Arsenal, 2 col)
+    ------------------------------------------------------- -->
+    <section class="section" id="s-assists">
+      <div class="section-header">
+        <h2 class="section-title">Top Assists</h2>
+      </div>
+      <div class="two-col-grid" id="assists-container">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------
+         SECTION 7: NEWS FEED
+    ------------------------------------------------------- -->
+    <section class="section" id="s-news">
+      <div class="section-header">
+        <h2 class="section-title">Arsenal News</h2>
+        <a href="https://www.newsnow.co.uk/h/Sport/Football/Premier+League/Arsenal"
+           target="_blank" rel="noopener noreferrer" class="newsnow-btn">
+          &#128240; NewsNow Arsenal
+        </a>
+      </div>
+      <div class="news-grid" id="news-container">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================================================================
+       FOOTER
+  ================================================================ -->
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-text">Built with &#10084;&#65039; for Gooners &nbsp;|&nbsp; Powered by football-data.org</p>
+      <a id="whatsapp-share" href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-btn">
+        &#128241; Share on WhatsApp
+      </a>
+    </div>
+  </footer>
+
+  <!-- ================================================================
+       JAVASCRIPT
+  ================================================================ -->
+  <script>
+    'use strict';
+
+    // ================================================================
+    // CONFIGURATION
+    // ================================================================
+
+    // Your football-data.org API key
+    const API_KEY    = 'f9632f4efd30435587e2e4c18c7c251d';
+    const API_BASE   = 'https://api.football-data.org/v4';
+    const ARSENAL_ID = 57;  // Arsenal FC team ID on football-data.org
+    const HEADERS    = { 'X-Auth-Token': API_KEY };
+
+    // CORS proxy — required when the page is opened as a local file://.
+    // The browser sends a null Origin in that case, which football-data.org
+    // (and most APIs) reject. corsproxy.io forwards all request headers,
+    // including X-Auth-Token, to the target server.
+    const CORS_PROXY = 'https://corsproxy.io/?url=';
+
+    // Wrapper for all football-data.org requests
+    async function apiFetch(path) {
+      const target = `${API_BASE}${path}`;
+      const res = await fetch(`${CORS_PROXY}${encodeURIComponent(target)}`, { headers: HEADERS });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    // Wrapper for rss2json news fetches (also needs the proxy under file://)
+    async function rssFetch(feedUrl) {
+      const target = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+      const res = await fetch(`${CORS_PROXY}${encodeURIComponent(target)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    // Competition display info: short name + badge colour
+    const COMP_INFO = {
+      'Premier League':        { short: 'EPL',     color: '#5b2d8a' },
+      'UEFA Champions League': { short: 'UCL',     color: '#1e5fa8' },
+      'UEFA Europa League':    { short: 'UEL',     color: '#f5a623' },
+      'UEFA Conference League':{ short: 'UECL',    color: '#00a859' },
+      'FA Cup':                { short: 'FA Cup',  color: '#003d7a' },
+      'EFL Cup':               { short: 'EFL Cup', color: '#007a4d' },
+    };
+
+    // RSS news feeds — fetched via rssFetch() which uses the CORS proxy
+    const RSS_FEEDS = [
+      { name: 'Football.London', url: 'https://www.football.london/arsenal/rss.xml', color: '#4da6ff' },
+      { name: 'Arseblog',        url: 'https://arseblog.com/feed',                  color: '#EF0107' },
+      { name: 'Just Arsenal',    url: 'https://justarsenal.com/feed',               color: '#f59e0b' },
+      { name: 'Daily Cannon',    url: 'https://dailycannon.com/feed',               color: '#22c55e' },
+    ];
+
+    // ================================================================
+    // UTILITY HELPERS
+    // ================================================================
+
+    // Format UTC date string as "Sat, 15 Mar"
+    function fmtDate(utc) {
+      return new Date(utc).toLocaleDateString('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short'
+      });
+    }
+
+    // Format UTC date string as local kick-off time "15:00"
+    function fmtTime(utc) {
+      return new Date(utc).toLocaleTimeString('en-GB', {
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    // Build a coloured competition badge <span>
+    function compBadge(compName) {
+      const info = COMP_INFO[compName] || { short: compName.slice(0, 8), color: '#555' };
+      return `<span class="comp-badge" style="background:${info.color}">${info.short}</span>`;
+    }
+
+    // Reusable loading HTML
+    const LOADING = `<div class="loading"><div class="spinner"></div></div>`;
+
+    // Reusable error/info HTML
+    const errBox  = (msg) => `<div class="error-msg">&#9888;&#65039; ${msg}</div>`;
+    const infoBox = (msg) => `<div class="info-msg">${msg}</div>`;
+
+    // Pad a number to 2 digits
+    const pad2 = (n) => String(n).padStart(2, '0');
+
+    // ================================================================
+    // COUNTDOWN TIMER
+    // ================================================================
+
+    let cdInterval = null;
+
+    // Start ticking countdown to `matchDateStr` (ISO UTC string)
+    function startCountdown(matchDateStr) {
+      if (cdInterval) clearInterval(cdInterval);
+
+      const target = new Date(matchDateStr).getTime();
+
+      function tick() {
+        const diff = target - Date.now();
+        if (diff <= 0) {
+          clearInterval(cdInterval);
+          const wrap = document.getElementById('cd-wrap');
+          if (wrap) wrap.innerHTML = '<span class="live-badge">&#128308; LIVE NOW</span>';
+          return;
+        }
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000)  / 60000);
+        const s = Math.floor((diff % 60000)    / 1000);
+        const set = (id, v) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = pad2(v);
+        };
+        set('cd-d', d); set('cd-h', h); set('cd-m', m); set('cd-s', s);
+      }
+
+      tick();
+      cdInterval = setInterval(tick, 1000);
+    }
+
+    // ================================================================
+    // SECTION 1 — NEXT MATCH
+    // Fetch: /teams/57/matches?status=SCHEDULED&limit=1
+    // ================================================================
+    async function loadNextMatch() {
+      const el = document.getElementById('next-match-container');
+      el.innerHTML = LOADING;
+      try {
+        const data  = await apiFetch(`/teams/${ARSENAL_ID}/matches?status=SCHEDULED&limit=1`);
+        const match = data.matches?.[0];
+
+        if (!match) {
+          el.innerHTML = infoBox('No upcoming matches found.');
+          return;
+        }
+
+        const isHome  = match.homeTeam.id === ARSENAL_ID;
+        const venue   = isHome ? 'Emirates Stadium' : (match.venue || 'Away');
+        const homeArs = match.homeTeam.id === ARSENAL_ID;
+        const awayArs = match.awayTeam.id === ARSENAL_ID;
+
+        el.innerHTML = `
+          <div class="next-match-card">
+
+            <!-- Teams row -->
+            <div class="nm-teams">
+
+              <!-- Home team -->
+              <div class="nm-team">
+                <img src="${match.homeTeam.crest}" alt="${match.homeTeam.name}"
+                     class="nm-crest"
+                     onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'&#127942;',style:'font-size:2.5rem'}))">
+                <span class="nm-team-name ${homeArs ? 'arsenal-name' : ''}">
+                  ${match.homeTeam.shortName || match.homeTeam.name}
+                </span>
+              </div>
+
+              <!-- Centre info -->
+              <div class="nm-center">
+                <span class="nm-vs">VS</span>
+                <div class="nm-meta">
+                  ${compBadge(match.competition.name)}
+                  <span class="nm-date">${fmtDate(match.utcDate)}</span>
+                  <span class="nm-time">${fmtTime(match.utcDate)}</span>
+                  <span class="nm-venue">&#128205; ${venue}</span>
+                </div>
+              </div>
+
+              <!-- Away team -->
+              <div class="nm-team">
+                <img src="${match.awayTeam.crest}" alt="${match.awayTeam.name}"
+                     class="nm-crest"
+                     onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'&#127942;',style:'font-size:2.5rem'}))">
+                <span class="nm-team-name ${awayArs ? 'arsenal-name' : ''}">
+                  ${match.awayTeam.shortName || match.awayTeam.name}
+                </span>
+              </div>
+
+            </div>
+
+            <!-- Countdown -->
+            <div class="countdown-section">
+              <div class="cd-label">&#9201; Kick-off in</div>
+              <div class="countdown" id="cd-wrap">
+                <div class="cd-unit">
+                  <span class="cd-num" id="cd-d">00</span>
+                  <span class="cd-text">Days</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                  <span class="cd-num" id="cd-h">00</span>
+                  <span class="cd-text">Hours</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                  <span class="cd-num" id="cd-m">00</span>
+                  <span class="cd-text">Mins</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                  <span class="cd-num" id="cd-s">00</span>
+                  <span class="cd-text">Secs</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `;
+
+        startCountdown(match.utcDate);
+
+      } catch (e) {
+        el.innerHTML = errBox('Could not load next match. ' + e.message);
+      }
+    }
+
+    // ================================================================
+    // SECTION 2 — EPL STANDINGS
+    // Fetch: /competitions/PL/standings
+    // ================================================================
+    async function loadStandings() {
+      const el = document.getElementById('standings-container');
+      el.innerHTML = LOADING;
+      try {
+        const data  = await apiFetch('/competitions/PL/standings');
+        const table = data.standings?.find(s => s.type === 'TOTAL')?.table || [];
+
+        // --- Top 4 Gap banner ---
+        const arsenalRow = table.find(r => r.team.id === ARSENAL_ID);
+        const pos4       = table[3];  // 4th place (0-indexed)
+        const pos5       = table[4];  // 5th place
+
+        let top4Html = '';
+        if (arsenalRow && pos4) {
+          const aPos  = arsenalRow.position;
+          const aPts  = arsenalRow.points;
+          if (aPos <= 4) {
+            const ahead = aPts - (pos5?.points ?? aPts);
+            top4Html = `<div class="top4-gap in-top4">
+              &#9989; Arsenal are in the Top 4!
+              ${ahead > 0 ? `&nbsp;(${ahead} pt${ahead !== 1 ? 's' : ''} clear of 5th)` : ''}
+            </div>`;
+          } else {
+            const behind = pos4.points - aPts;
+            const name4  = pos4.team.shortName || pos4.team.name;
+            top4Html = `<div class="top4-gap out-top4">
+              &#9888;&#65039; Top 4 Gap: ${behind} pt${behind !== 1 ? 's' : ''}
+              behind ${name4} (4th)
+            </div>`;
+          }
+        }
+
+        // --- Build table rows ---
+        const rows = table.map((row, idx) => {
+          const isArsenal = row.team.id === ARSENAL_ID;
+
+          // Form badges — API returns "W,W,D,L,W" comma-separated string
+          const formArr = (row.form || '').split(',').filter(Boolean).slice(-5);
+          const formHtml = formArr.map(r => {
+            const cls = r === 'W' ? 'fw' : r === 'D' ? 'fd' : 'fl';
+            return `<span class="form-badge ${cls}">${r}</span>`;
+          }).join('');
+
+          // Zone divider CSS class (bottom border of row)
+          const zoneCls =
+            idx === 3  ? 'zone-ucl' :
+            idx === 5  ? 'zone-uel' :
+            idx === 16 ? 'zone-rel' : '';
+
+          // Position number colour
+          const posCls =
+            row.position <= 4  ? 'pos-ucl' :
+            row.position <= 6  ? 'pos-uel' :
+            row.position >= 18 ? 'pos-rel' : '';
+
+          const gd = row.goalDifference;
+
+          return `
+            <tr class="${isArsenal ? 'arsenal-row' : ''} ${zoneCls}">
+              <td><span class="${posCls}">${row.position}</span></td>
+              <td class="left team-cell">
+                <img src="${row.team.crest}" alt=""
+                     class="table-crest"
+                     onerror="this.style.display='none'">
+                ${row.team.shortName || row.team.name}
+              </td>
+              <td>${row.playedGames}</td>
+              <td class="hide-sm">${row.won}</td>
+              <td class="hide-sm">${row.draw}</td>
+              <td class="hide-sm">${row.lost}</td>
+              <td class="hide-sm">${gd > 0 ? '+' : ''}${gd}</td>
+              <td><strong>${row.points}</strong></td>
+              <td class="form-col">${formHtml}</td>
+            </tr>
+          `;
+        }).join('');
+
+        el.innerHTML = `
+          ${top4Html}
+          <div class="table-wrapper">
+            <table class="standings-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th class="left">Club</th>
+                  <th>P</th>
+                  <th class="hide-sm">W</th>
+                  <th class="hide-sm">D</th>
+                  <th class="hide-sm">L</th>
+                  <th class="hide-sm">GD</th>
+                  <th>Pts</th>
+                  <th>Form</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+          <div class="zone-legend">
+            <span><span class="dot" style="background:#60a5fa"></span> Champions League</span>
+            <span><span class="dot" style="background:#fb923c"></span> Europa League</span>
+            <span><span class="dot" style="background:#f87171"></span> Relegation</span>
+          </div>
+        `;
+
+      } catch (e) {
+        el.innerHTML = errBox('Could not load standings. ' + e.message);
+      }
+    }
+
+    // ================================================================
+    // SECTION 3 — UPCOMING FIXTURES
+    // Fetch: /teams/57/matches?status=SCHEDULED&limit=5
+    // ================================================================
+    async function loadFixtures() {
+      const el = document.getElementById('fixtures-container');
+      el.innerHTML = LOADING;
+      try {
+        const data    = await apiFetch(`/teams/${ARSENAL_ID}/matches?status=SCHEDULED&limit=5`);
+        const matches = data.matches || [];
+
+        if (!matches.length) {
+          el.innerHTML = infoBox('No upcoming fixtures found.');
+          return;
+        }
+
+        const cards = matches.map(m => {
+          const isHome  = m.homeTeam.id === ARSENAL_ID;
+          const homeArs = m.homeTeam.id === ARSENAL_ID;
+          const awayArs = m.awayTeam.id === ARSENAL_ID;
+          const venue   = isHome ? 'Emirates Stadium (H)' : (m.venue || 'Away (A)');
+
+          return `
+            <div class="fixture-card">
+              <div class="card-header">
+                ${compBadge(m.competition.name)}
+                <span class="card-date">${fmtDate(m.utcDate)} &bull; ${fmtTime(m.utcDate)}</span>
+              </div>
+              <div class="card-teams">
+                <div class="card-team">
+                  <img src="${m.homeTeam.crest}" alt="${m.homeTeam.name}"
+                       class="card-crest" onerror="this.style.display='none'">
+                  <span class="${homeArs ? 'arsenal-name' : ''}">
+                    ${m.homeTeam.shortName || m.homeTeam.name}
+                  </span>
+                </div>
+                <span class="card-vs">VS</span>
+                <div class="card-team right">
+                  <img src="${m.awayTeam.crest}" alt="${m.awayTeam.name}"
+                       class="card-crest" onerror="this.style.display='none'">
+                  <span class="${awayArs ? 'arsenal-name' : ''}">
+                    ${m.awayTeam.shortName || m.awayTeam.name}
+                  </span>
+                </div>
+              </div>
+              <div class="card-venue">&#128205; ${venue}</div>
+            </div>
+          `;
+        }).join('');
+
+        el.innerHTML = `<div class="fixtures-grid">${cards}</div>`;
+
+      } catch (e) {
+        el.innerHTML = errBox('Could not load fixtures. ' + e.message);
+      }
+    }
+
+    // ================================================================
+    // SECTION 4 — RECENT RESULTS
+    // Fetch: /teams/57/matches?status=FINISHED&limit=5
+    // ================================================================
+    async function loadResults() {
+      const el = document.getElementById('results-container');
+      el.innerHTML = LOADING;
+      try {
+        const data    = await apiFetch(`/teams/${ARSENAL_ID}/matches?status=FINISHED&limit=5`);
+        // Reverse so most recent appears first
+        const matches = [...(data.matches || [])].reverse();
+
+        if (!matches.length) {
+          el.innerHTML = infoBox('No recent results found.');
+          return;
+        }
+
+        const cards = matches.map(m => {
+          const isHome  = m.homeTeam.id === ARSENAL_ID;
+          const aGoals  = isHome ? m.score.fullTime.home : m.score.fullTime.away;
+          const oGoals  = isHome ? m.score.fullTime.away : m.score.fullTime.home;
+          const res     = aGoals > oGoals ? 'W' : aGoals === oGoals ? 'D' : 'L';
+          const cls     = res === 'W' ? 'win' : res === 'D' ? 'draw' : 'loss';
+          const homeArs = m.homeTeam.id === ARSENAL_ID;
+          const awayArs = m.awayTeam.id === ARSENAL_ID;
+
+          return `
+            <div class="result-card ${cls}">
+              <div class="card-header">
+                ${compBadge(m.competition.name)}
+                <span class="card-date">${fmtDate(m.utcDate)}</span>
+                <span class="result-badge ${cls}">${res}</span>
+              </div>
+              <div class="card-teams">
+                <div class="card-team">
+                  <img src="${m.homeTeam.crest}" alt="${m.homeTeam.name}"
+                       class="card-crest" onerror="this.style.display='none'">
+                  <span class="${homeArs ? 'arsenal-name' : ''}">
+                    ${m.homeTeam.shortName || m.homeTeam.name}
+                  </span>
+                </div>
+                <div class="result-score">
+                  ${m.score.fullTime.home ?? '-'}&ndash;${m.score.fullTime.away ?? '-'}
+                </div>
+                <div class="card-team right">
+                  <img src="${m.awayTeam.crest}" alt="${m.awayTeam.name}"
+                       class="card-crest" onerror="this.style.display='none'">
+                  <span class="${awayArs ? 'arsenal-name' : ''}">
+                    ${m.awayTeam.shortName || m.awayTeam.name}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        el.innerHTML = `<div class="results-grid">${cards}</div>`;
+
+      } catch (e) {
+        el.innerHTML = errBox('Could not load results. ' + e.message);
+      }
+    }
+
+    // ================================================================
+    // SECTIONS 5 & 6 — TOP SCORERS + TOP ASSISTS
+    // One fetch shared between both sections:
+    // Fetch: /competitions/PL/scorers?limit=20
+    // ================================================================
+    async function loadScorersAndAssists() {
+      const scEl = document.getElementById('scorers-container');
+      const asEl = document.getElementById('assists-container');
+      scEl.innerHTML = LOADING;
+      asEl.innerHTML = LOADING;
+
+      try {
+        const data    = await apiFetch('/competitions/PL/scorers?limit=20');
+        const scorers = data.scorers || [];
+
+        // ---- SCORERS ----
+        const top10Goals      = scorers.slice(0, 10);
+        const arsenalGoals    = scorers.filter(s => s.team.id === ARSENAL_ID).slice(0, 5);
+        scEl.innerHTML =
+          buildStatCard('EPL Top Scorers', top10Goals,
+            s => `${s.goals ?? 0} &#9917;`,
+            s => s.team.shortName || s.team.name,
+            false) +
+          buildStatCard('Arsenal Top Scorers', arsenalGoals,
+            s => `${s.goals ?? 0} &#9917;`,
+            s => `${s.goals ?? 0} goals &bull; ${s.assists ?? 0} assists`,
+            true);
+
+        // ---- ASSISTS ----
+        // Sort by assists descending (the API orders by goals by default)
+        const byAssists       = [...scorers].sort((a, b) => (b.assists ?? 0) - (a.assists ?? 0));
+        const top10Assists    = byAssists.slice(0, 10);
+        const arsenalAssists  = byAssists.filter(s => s.team.id === ARSENAL_ID).slice(0, 5);
+        asEl.innerHTML =
+          buildStatCard('EPL Top Assists', top10Assists,
+            s => `${s.assists ?? 0} &#127919;`,
+            s => s.team.shortName || s.team.name,
+            false) +
+          buildStatCard('Arsenal Top Assists', arsenalAssists,
+            s => `${s.assists ?? 0} &#127919;`,
+            s => `${s.goals ?? 0} goals &bull; ${s.assists ?? 0} assists`,
+            true);
+
+      } catch (e) {
+        scEl.innerHTML = errBox('Could not load scorers. ' + e.message);
+        asEl.innerHTML = errBox('Could not load assists. ' + e.message);
+      }
+    }
+
+    // Helper: build a scorer/assist card column
+    function buildStatCard(title, list, statFn, subFn, isArsenalCard) {
+      const rows = list.length
+        ? list.map((s, i) => {
+            const isArsenal = s.team.id === ARSENAL_ID;
+            return `
+              <div class="scorer-row ${isArsenal ? 'is-arsenal' : ''}">
+                <span class="scorer-rank">${i + 1}</span>
+                <div class="scorer-info">
+                  <span class="scorer-name">${s.player.name}</span>
+                  <span class="scorer-sub">${subFn(s)}</span>
+                </div>
+                <span class="scorer-stat">${statFn(s)}</span>
+              </div>
+            `;
+          }).join('')
+        : '<div class="no-data">No data available</div>';
+
+      return `
+        <div class="scorers-card ${isArsenalCard ? 'arsenal-card' : ''}">
+          <div class="scorers-card-title">${title}</div>
+          <div class="scorers-list">${rows}</div>
+        </div>
+      `;
+    }
+
+    // ================================================================
+    // SECTION 7 — ARSENAL NEWS FEED
+    // Fetches 4 RSS feeds simultaneously via rss2json CORS proxy,
+    // merges results, sorts by date, shows newest 12 articles.
+    // ================================================================
+    async function loadNews() {
+      const el = document.getElementById('news-container');
+      el.innerHTML = LOADING;
+      try {
+        // Fetch all feeds in parallel via rssFetch() (uses CORS proxy);
+        // silently swallow individual failures so one bad feed never blocks the rest
+        const fetches = RSS_FEEDS.map(feed =>
+          rssFetch(feed.url)
+            .then(d => (d.items || []).slice(0, 5).map(item => ({ ...item, _src: feed })))
+            .catch(() => [])
+        );
+
+        const results = await Promise.all(fetches);
+
+        // Merge, sort newest-first, take top 12
+        const articles = results
+          .flat()
+          .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+          .slice(0, 12);
+
+        if (!articles.length) {
+          el.innerHTML = infoBox('No news articles could be loaded right now.');
+          return;
+        }
+
+        el.innerHTML = articles.map(a => {
+          const thumb   = a.thumbnail || a.enclosure?.link || '';
+          const dateStr = new Date(a.pubDate).toLocaleDateString('en-GB', {
+            day: 'numeric', month: 'short', year: 'numeric'
+          });
+          const thumbHtml = thumb
+            ? `<div class="news-thumb" style="background-image:url('${thumb}')"></div>`
+            : `<div class="news-thumb">&#128240;</div>`;
+
+          return `
+            <a href="${a.link}" target="_blank" rel="noopener noreferrer" class="news-card">
+              ${thumbHtml}
+              <div class="news-body">
+                <span class="news-source" style="color:${a._src.color}">${a._src.name}</span>
+                <h4 class="news-title">${a.title}</h4>
+                <span class="news-date">${dateStr}</span>
+              </div>
+            </a>
+          `;
+        }).join('');
+
+      } catch (e) {
+        el.innerHTML = errBox('Could not load news. ' + e.message);
+      }
+    }
+
+    // ================================================================
+    // INIT — Load all sections independently
+    // Promise.allSettled ensures one failure never blocks others
+    // ================================================================
+    async function initAll() {
+      const btn = document.getElementById('refresh-btn');
+      btn.textContent = '&#8635; Loading\u2026';
+      btn.disabled = true;
+
+      await Promise.allSettled([
+        loadNextMatch(),
+        loadStandings(),
+        loadFixtures(),
+        loadResults(),
+        loadScorersAndAssists(),
+        loadNews(),
+      ]);
+
+      btn.textContent = '&#8635; Refresh';
+      btn.disabled = false;
+    }
+
+    // WhatsApp share link (fills in the current page URL)
+    document.getElementById('whatsapp-share').href =
+      `https://wa.me/?text=${encodeURIComponent(
+        '\uD83D\uDD34 The Arsenal Hub By Polla \u2013 Come On You Gunners! ' +
+        window.location.href
+      )}`;
+
+    // Refresh button
+    document.getElementById('refresh-btn').addEventListener('click', initAll);
+
+    // Boot!
+    initAll();
+  </script>
+</body>
+</html>
