@@ -1461,7 +1461,7 @@
       asEl.innerHTML = LOADING;
 
       try {
-        const data    = await apiFetch('/competitions/PL/scorers?limit=20');
+        const data    = await apiFetch('/competitions/PL/scorers?limit=100');
         const scorers = data.scorers || [];
 
         // ---- SCORERS ----
