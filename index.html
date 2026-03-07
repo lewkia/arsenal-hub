@@ -1466,7 +1466,7 @@
 
         // ---- SCORERS ----
         const top10Goals      = scorers.slice(0, 10);
-        const arsenalGoals    = scorers.filter(s => s.team.id === ARSENAL_ID).slice(0, 5);
+        const arsenalGoals    = scorers.filter(s => s.team.id === ARSENAL_ID).slice(0, 10);
         scEl.innerHTML =
           buildStatCard('EPL Top Scorers', top10Goals,
             s => `${s.goals ?? 0} &#9917;`,
@@ -1481,7 +1481,7 @@
         // Sort by assists descending (the API orders by goals by default)
         const byAssists       = [...scorers].sort((a, b) => (b.assists ?? 0) - (a.assists ?? 0));
         const top10Assists    = byAssists.slice(0, 10);
-        const arsenalAssists  = byAssists.filter(s => s.team.id === ARSENAL_ID).slice(0, 5);
+        const arsenalAssists  = byAssists.filter(s => s.team.id === ARSENAL_ID).slice(0, 10);
         asEl.innerHTML =
           buildStatCard('EPL Top Assists', top10Assists,
             s => `${s.assists ?? 0} &#127919;`,
