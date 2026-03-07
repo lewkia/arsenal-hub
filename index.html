@@ -987,28 +987,32 @@
 
     // Your football-data.org API key
     const API_KEY    = 'f9632f4efd30435587e2e4c18c7c251d';
-    const API_BASE   = 'https://api.football-data.org/v4';
     const ARSENAL_ID = 57;  // Arsenal FC team ID on football-data.org
     const HEADERS    = { 'X-Auth-Token': API_KEY };
 
-    // CORS proxy — only used as a fallback when the direct fetch fails with a
-    // network/CORS error (e.g. when the page is opened as a local file://).
-    // On any proper HTTP/HTTPS origin (Vercel, localhost server, etc.) the
-    // direct fetch works fine and the proxy is never invoked.
+    // When served from Vercel (or any web server), requests to /api/football/*
+    // are rewritten server-side to football-data.org/v4/* via vercel.json.
+    // Same-origin requests bypass CORS entirely — no preflight, no blocked headers.
+    // When opened as a local file://, fall back to the direct API URL + CORS proxy.
+    const IS_FILE  = window.location.protocol === 'file:';
+    const API_BASE = IS_FILE ? 'https://api.football-data.org/v4' : '/api/football';
+    const API_DIRECT = 'https://api.football-data.org/v4'; // used only by file:// proxy fallback
+
+    // CORS proxy — only invoked for file:// where same-origin rewrite isn't available
     const CORS_PROXY = 'https://corsproxy.io/?url=';
 
     // Wrapper for all football-data.org requests.
-    // Strategy: try direct → on TypeError (CORS/network blocked) retry via proxy.
     async function apiFetch(path) {
       const target = `${API_BASE}${path}`;
       try {
         const res = await fetch(target, { headers: HEADERS });
         if (res.ok) return res.json();
-        throw new Error(`HTTP ${res.status}`);   // real API error — don't proxy
+        throw new Error(`HTTP ${res.status}`);
       } catch (e) {
-        if (!(e instanceof TypeError)) throw e;  // not a network/CORS error
-        // Fallback: route through CORS proxy (handles file:// null-origin)
-        const res = await fetch(`${CORS_PROXY}${encodeURIComponent(target)}`, { headers: HEADERS });
+        // Only attempt proxy fallback for network/CORS errors on file:// protocol
+        if (!(e instanceof TypeError) || !IS_FILE) throw e;
+        const proxyTarget = `${API_DIRECT}${path}`;
+        const res = await fetch(`${CORS_PROXY}${encodeURIComponent(proxyTarget)}`, { headers: HEADERS });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       }
@@ -1022,7 +1026,7 @@
         if (res.ok) return res.json();
         throw new Error(`HTTP ${res.status}`);
       } catch (e) {
-        if (!(e instanceof TypeError)) throw e;
+        if (!(e instanceof TypeError) || !IS_FILE) throw e;
         const res = await fetch(`${CORS_PROXY}${encodeURIComponent(target)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
