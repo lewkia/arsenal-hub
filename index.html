@@ -694,6 +694,30 @@
       color: var(--white);
     }
 
+    .scorer-row.extra-row { display: none; }
+    .scorers-card.expanded .scorer-row.extra-row { display: flex; }
+    .scorers-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      width: 100%;
+      padding: 0.55rem;
+      background: none;
+      border: none;
+      border-top: 1px solid var(--border);
+      color: var(--secondary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s;
+    }
+    .scorers-toggle:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+    .scorers-toggle-arrow { transition: transform 0.25s ease; display: inline-block; }
+    .scorers-card.expanded .scorers-toggle-arrow { transform: rotate(180deg); }
+
     .no-data {
       text-align: center;
       color: var(--secondary);
@@ -1677,28 +1701,39 @@
 
     // Helper: build a scorer/assist card column
     function buildStatCard(title, list, statFn, subFn, isArsenalCard) {
-      const rows = list.length
-        ? list.map((s, i) => {
-            const isArsenal = s.team.id === ARSENAL_ID;
-            return `
-              <div class="scorer-row ${isArsenal ? 'is-arsenal' : ''}">
-                <span class="scorer-rank">${i + 1}</span>
-                <div class="scorer-info">
-                  <span class="scorer-name">${s.player.name}</span>
-                  <span class="scorer-sub">${subFn(s)}</span>
-                </div>
-                <span class="scorer-stat">${statFn(s)}</span>
-              </div>
-            `;
-          }).join('')
-        : '<div class="no-data">No data available</div>';
+      if (!list.length) return `
+        <div class="scorers-card ${isArsenalCard ? 'arsenal-card' : ''}">
+          <div class="scorers-card-title">${title}</div>
+          <div class="scorers-list"><div class="no-data">No data available</div></div>
+        </div>`;
+
+      const rows = list.map((s, i) => {
+        const isArsenal = s.team.id === ARSENAL_ID;
+        const extra = i >= 5 ? 'extra-row' : '';
+        return `
+          <div class="scorer-row ${isArsenal ? 'is-arsenal' : ''} ${extra}">
+            <span class="scorer-rank">${i + 1}</span>
+            <div class="scorer-info">
+              <span class="scorer-name">${s.player.name}</span>
+              <span class="scorer-sub">${subFn(s)}</span>
+            </div>
+            <span class="scorer-stat">${statFn(s)}</span>
+          </div>`;
+      }).join('');
+
+      const hasExtra = list.length > 5;
+      const toggle = hasExtra ? `
+        <button class="scorers-toggle" onclick="this.closest('.scorers-card').classList.toggle('expanded');this.querySelector('.scorers-toggle-label').textContent=this.closest('.scorers-card').classList.contains('expanded')?'Show less':'Show top 10';">
+          <span class="scorers-toggle-label">Show top 10</span>
+          <span class="scorers-toggle-arrow">&#8964;</span>
+        </button>` : '';
 
       return `
         <div class="scorers-card ${isArsenalCard ? 'arsenal-card' : ''}">
           <div class="scorers-card-title">${title}</div>
           <div class="scorers-list">${rows}</div>
-        </div>
-      `;
+          ${toggle}
+        </div>`;
     }
 
     // ================================================================
