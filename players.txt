@@ -1,0 +1,205 @@
+ARSENAL FC - MEN'S FIRST TEAM SQUAD 2025/26
+===========================================
+Manager: Mikel Arteta
+Data as of: March 2026
+Sources: Arsenal.com, ESPN, Transfermarkt, TeamTalk, Sky Sports, Goal.com
+
+Market values shown in GBP (£). Approx. converted from EUR at 0.86 rate.
+Contract expiry sourced from TeamTalk / TBR Football + latest updates (Mar 2026).
+* = Club has option for 1-year extension
+
+-------------------------------------------
+GOALKEEPERS
+-------------------------------------------
+
+#1  David Raya
+    Age: 29 | Nationality: Spanish
+    Contract Until: Jun 2028
+    Market Value: ~£31M
+
+#13 Kepa Arrizabalaga
+    Age: 30 | Nationality: Spanish
+    Contract Until: Jun 2028
+    Market Value: ~£7M
+
+#31 Karl Hein  [ON LOAN OUT - Werder Bremen]
+    Age: 22 | Nationality: Estonian
+    Contract Until: Jun 2027
+    Market Value: ~£3M
+
+-------------------------------------------
+DEFENDERS
+-------------------------------------------
+
+#2  William Saliba
+    Age: 24 | Nationality: French
+    Contract Until: Jun 2030  [NEW DEAL signed Sep 2025]
+    Market Value: ~£95M
+
+#3  Cristhian Mosquera
+    Age: 21 | Nationality: Spanish
+    Contract Until: Jun 2030 (*option to 2031)
+    Market Value: ~£39M
+
+#4  Ben White
+    Age: 27 | Nationality: English
+    Contract Until: Jun 2028
+    Market Value: ~£38M
+
+#5  Piero Hincapie  [ON LOAN IN - from Bayer Leverkusen | Buy option ~£45M]
+    Age: 23 | Nationality: Ecuadorian
+    Contract Until: Jun 2026 (loan expiry)
+    Market Value: ~£34M
+
+#6  Gabriel Magalhaes
+    Age: 27 | Nationality: Brazilian
+    Contract Until: Jun 2029  [NEW DEAL signed Jun 2025]
+    Market Value: ~£49M
+
+#12 Jurrien Timber
+    Age: 23 | Nationality: Dutch
+    Contract Until: Jun 2028
+    Market Value: ~£59M
+
+#15 Jakub Kiwior  [ON LOAN OUT - FC Porto]
+    Age: 24 | Nationality: Polish
+    Contract Until: Jun 2028
+    Market Value: ~£17M
+
+#17 Oleksandr Zinchenko  [ON LOAN OUT - Nottingham Forest]
+    Age: 28 | Nationality: Ukrainian
+    Contract Until: Jun 2027
+    Market Value: ~£13M
+
+#33 Riccardo Calafiori
+    Age: 22 | Nationality: Italian
+    Contract Until: Jun 2029
+    Market Value: ~£55M
+
+#49 Myles Lewis-Skelly
+    Age: 18 | Nationality: English
+    Contract Until: Jun 2030  [NEW DEAL signed Jun 2025]
+    Market Value: ~£26M
+
+-------------------------------------------
+MIDFIELDERS
+-------------------------------------------
+
+#8  Martin Odegaard  [Captain]
+    Age: 26 | Nationality: Norwegian
+    Contract Until: Jun 2028
+    Market Value: ~£86M
+
+#10 Eberechi Eze  [NEW SIGNING - Summer 2025, from Crystal Palace]
+    Age: 27 | Nationality: English
+    Contract Until: Jun 2029 (*option to 2030)
+    Market Value: ~£72M
+
+#16 Christian Norgaard
+    Age: 30 | Nationality: Danish
+    Contract Until: Jun 2027 (*option to 2028)
+    Market Value: ~£13M
+
+#23 Mikel Merino
+    Age: 28 | Nationality: Spanish
+    Contract Until: Jun 2028
+    Market Value: ~£38M
+
+#36 Martin Zubimendi  [NEW SIGNING - Summer 2025, from Real Sociedad]
+    Age: 26 | Nationality: Spanish
+    Contract Until: Jun 2030
+    Market Value: ~£60M
+
+#41 Declan Rice
+    Age: 26 | Nationality: English
+    Contract Until: Jun 2030
+    Market Value: ~£103M
+
+-------------------------------------------
+FORWARDS / ATTACKING MIDFIELDERS
+-------------------------------------------
+
+#7  Bukayo Saka
+    Age: 23 | Nationality: English
+    Contract Until: Jun 2030  [NEW DEAL signed Feb 2026]
+    Market Value: ~£129M
+
+#9  Gabriel Jesus
+    Age: 27 | Nationality: Brazilian
+    Contract Until: Jun 2027
+    Market Value: ~£26M
+
+#11 Gabriel Martinelli
+    Age: 23 | Nationality: Brazilian
+    Contract Until: Jun 2027 (*option to 2028)
+    Market Value: ~£60M
+
+#14 Viktor Gyokeres  [NEW SIGNING - Summer 2025, from Sporting CP]
+    Age: 27 | Nationality: Swedish
+    Contract Until: Jun 2030
+    Market Value: ~£86M
+
+#19 Leandro Trossard
+    Age: 30 | Nationality: Belgian
+    Contract Until: Jun 2027
+    Market Value: ~£22M
+
+#20 Noni Madueke  [NEW SIGNING - Summer 2025, from Chelsea]
+    Age: 23 | Nationality: English
+    Contract Until: Jun 2030
+    Market Value: ~£43M
+
+#21 Fabio Vieira  [ON LOAN OUT - Hamburg]
+    Age: 24 | Nationality: Portuguese
+    Contract Until: Jun 2027
+    Market Value: ~£13M
+
+#22 Ethan Nwaneri
+    Age: 18 | Nationality: English
+    Contract Until: Jun 2030  [NEW DEAL signed Aug 2025]
+    Market Value: ~£34M
+
+#24 Reiss Nelson  [ON LOAN OUT - Brentford]
+    Age: 25 | Nationality: English
+    Contract Until: Jun 2027
+    Market Value: ~£9M
+
+#29 Kai Havertz
+    Age: 25 | Nationality: German
+    Contract Until: Jun 2028
+    Market Value: ~£55M
+
+-------------------------------------------
+LOANS OUT (still Arsenal-registered)
+-------------------------------------------
+#31 Karl Hein        - Werder Bremen (GK)
+#15 Jakub Kiwior     - FC Porto (DEF)
+#17 Zinchenko        - Nottingham Forest (DEF/MID)
+#21 Fabio Vieira     - Hamburg (MID/FWD)
+#24 Reiss Nelson     - Brentford (FWD)
+
+-------------------------------------------
+LOAN IN
+-------------------------------------------
+#5  Piero Hincapie   - from Bayer Leverkusen (DEF) | Buy option ~£45M
+
+-------------------------------------------
+KEY CONTRACT & SQUAD NOTES
+-------------------------------------------
+- Bukayo Saka:      NEW deal Feb 2026 (was 2027, now 2030), £300k/week
+- William Saliba:   NEW deal Sep 2025 (extended to 2030), £250k/week
+- Gabriel Magalhaes:NEW deal Jun 2025 (extended to 2029), £200k/week
+- Myles Lewis-Skelly:NEW deal Jun 2025 (extended to 2030)
+- Ethan Nwaneri:    NEW deal Aug 2025 (extended to 2030)
+- Eberechi Eze:     Signed summer 2025 from Crystal Palace (£60M fee), wears #10
+- Viktor Gyokeres:  Signed summer 2025 from Sporting CP (~£55M fee), wears #14
+- Martin Zubimendi: Signed summer 2025 from Real Sociedad, wears #36
+- Noni Madueke:     Signed summer 2025 from Chelsea, wears #20
+- Cristhian Mosquera:Signed summer 2025 from Valencia, wears #3
+- Piero Hincapie:   Season-long loan from Bayer Leverkusen, wears #5
+- Albert Sambi Lokonga (#28): Sold permanently to Hamburg (no longer in squad)
+- Shirt #10 previously vacant; now held by Eberechi Eze
+- #17 and #28 effectively unused at Arsenal this season (holders away/sold)
+
+-------------------------------------------
+END OF FILE

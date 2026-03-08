@@ -922,19 +922,47 @@
     }
     .player-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(239,1,7,0.3); }
     .player-card.expanded { border-color: var(--red); background: rgba(239,1,7,0.07); }
-    .player-number { font-size: 1.4rem; font-weight: 900; color: var(--red); opacity: 0.65; line-height: 1; }
-    .player-name   { font-size: 0.83rem; font-weight: 700; margin-top: 0.2rem; line-height: 1.25; }
-    .player-meta   { font-size: 0.7rem; color: var(--secondary); margin-top: 0.15rem; }
+    .player-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem; }
+    .player-number { font-size: 1.4rem; font-weight: 900; color: var(--red); opacity: 0.65; line-height: 1; flex-shrink: 0; }
+    .player-flag   { font-size: 1.1rem; line-height: 1; margin-top: 0.1rem; flex-shrink: 0; }
+    .player-name   { font-size: 0.83rem; font-weight: 700; margin-top: 0.25rem; line-height: 1.25; }
+    .player-nat    { font-size: 0.68rem; color: var(--secondary); margin-top: 0.1rem; }
+    .player-status-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+    .p-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+    }
+    .p-badge-loan-out { background: rgba(234,179,8,0.15);  color: #fde047; border: 1px solid rgba(234,179,8,0.3); }
+    .p-badge-loan-in  { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+    .p-badge-new      { background: rgba(34,197,94,0.15);  color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
+    .p-badge-captain  { background: rgba(239,1,7,0.15);    color: #fca5a5; border: 1px solid rgba(239,1,7,0.3); }
     .player-detail {
       display: none;
-      margin-top: 0.6rem;
+      margin-top: 0.65rem;
       padding-top: 0.55rem;
       border-top: 1px solid var(--border);
       font-size: 0.72rem;
       color: var(--secondary);
-      line-height: 1.7;
     }
     .player-card.expanded .player-detail { display: block; }
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.22rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-icon { font-size: 0.78rem; flex-shrink: 0; width: 1.1rem; text-align: center; }
+    .detail-label { color: var(--secondary); min-width: 4.5rem; flex-shrink: 0; }
+    .detail-val { color: var(--white); font-weight: 600; }
+    .detail-val.green { color: #86efac; }
+    .detail-loan-note { font-size: 0.65rem; color: #93c5fd; margin-top: 0.3rem; font-style: italic; }
 
 
     /* ============================================================
@@ -1748,6 +1776,10 @@
         'Iran':'IR','Saudi Arabia':'SA','Qatar':'QA','Iceland':'IS',
         'Ireland':'IE','Northern Ireland':'GB-NIR','Russia':'RU','Romania':'RO',
         'Hungary':'HU','Serbia':'RS','Bulgaria':'BG',
+        'Estonian':'EE','Estonia':'EE','Dutch':'NL','Norwegian':'NO','Ecuadorian':'EC',
+        'Spanish':'ES','French':'FR','Brazilian':'BR','German':'DE',
+        'Italian':'IT','Polish':'PL','Ukrainian':'UA','Belgian':'BE',
+        'Portuguese':'PT','English':'GB-ENG','Swedish':'SE','Danish':'DK',
       };
       const code = map[nationality];
       if (!code) return '🌍';
@@ -1764,43 +1796,101 @@
       return Math.floor(diff / (365.25 * 24 * 3600 * 1000));
     }
 
-    async function loadSquad() {
-      const el = document.getElementById('squad-container');
-      el.innerHTML = LOADING;
-      try {
-        const data  = await apiFetch('/teams/57');
-        const squad = data.squad || [];
+    function loadSquad() {
+      // num, name, age, nat, contract, value, status, loanNote, captain
+      const SQUAD = {
+        Goalkeeper: [
+          { num:  1, name: 'David Raya',          age: 29, nat: 'Spanish',    contract: 'Jun 2028', value: '£31M' },
+          { num: 13, name: 'Kepa Arrizabalaga',   age: 30, nat: 'Spanish',    contract: 'Jun 2028', value: '£7M'  },
+          { num: 31, name: 'Karl Hein',           age: 22, nat: 'Estonian',   contract: 'Jun 2027', value: '£3M',  status: 'loanOut', loanNote: 'On loan → Werder Bremen' },
+        ],
+        Defence: [
+          { num:  2, name: 'William Saliba',      age: 24, nat: 'French',     contract: 'Jun 2030', value: '£95M' },
+          { num:  3, name: 'Cristhian Mosquera',  age: 21, nat: 'Spanish',    contract: 'Jun 2030', value: '£39M', status: 'new',     loanNote: 'Signed from Valencia' },
+          { num:  4, name: 'Ben White',           age: 27, nat: 'English',    contract: 'Jun 2028', value: '£38M' },
+          { num:  5, name: 'Piero Hincapie',      age: 23, nat: 'Ecuadorian', contract: 'Jun 2026', value: '£34M', status: 'loanIn',  loanNote: 'On loan ← Bayer Leverkusen' },
+          { num:  6, name: 'Gabriel Magalhaes',   age: 27, nat: 'Brazilian',  contract: 'Jun 2029', value: '£49M' },
+          { num: 12, name: 'Jurrien Timber',      age: 23, nat: 'Dutch',      contract: 'Jun 2028', value: '£59M' },
+          { num: 15, name: 'Jakub Kiwior',        age: 24, nat: 'Polish',     contract: 'Jun 2028', value: '£17M', status: 'loanOut', loanNote: 'On loan → FC Porto' },
+          { num: 17, name: 'Oleksandr Zinchenko', age: 28, nat: 'Ukrainian',  contract: 'Jun 2027', value: '£13M', status: 'loanOut', loanNote: 'On loan → Nottingham Forest' },
+          { num: 33, name: 'Riccardo Calafiori',  age: 22, nat: 'Italian',    contract: 'Jun 2029', value: '£55M' },
+          { num: 49, name: 'Myles Lewis-Skelly',  age: 18, nat: 'English',    contract: 'Jun 2030', value: '£26M' },
+        ],
+        Midfield: [
+          { num:  8, name: 'Martin Odegaard',     age: 26, nat: 'Norwegian',  contract: 'Jun 2028', value: '£86M',  captain: true },
+          { num: 10, name: 'Eberechi Eze',        age: 27, nat: 'English',    contract: 'Jun 2029', value: '£72M',  status: 'new', loanNote: 'Signed from Crystal Palace' },
+          { num: 16, name: 'Christian Norgaard',  age: 30, nat: 'Danish',     contract: 'Jun 2027', value: '£13M' },
+          { num: 23, name: 'Mikel Merino',        age: 28, nat: 'Spanish',    contract: 'Jun 2028', value: '£38M' },
+          { num: 36, name: 'Martin Zubimendi',    age: 26, nat: 'Spanish',    contract: 'Jun 2030', value: '£60M',  status: 'new', loanNote: 'Signed from Real Sociedad' },
+          { num: 41, name: 'Declan Rice',         age: 26, nat: 'English',    contract: 'Jun 2030', value: '£103M' },
+        ],
+        Offence: [
+          { num:  7, name: 'Bukayo Saka',         age: 23, nat: 'English',    contract: 'Jun 2030', value: '£129M' },
+          { num:  9, name: 'Gabriel Jesus',       age: 27, nat: 'Brazilian',  contract: 'Jun 2027', value: '£26M' },
+          { num: 11, name: 'Gabriel Martinelli',  age: 23, nat: 'Brazilian',  contract: 'Jun 2027', value: '£60M' },
+          { num: 14, name: 'Viktor Gyokeres',     age: 27, nat: 'Swedish',    contract: 'Jun 2030', value: '£86M',  status: 'new', loanNote: 'Signed from Sporting CP' },
+          { num: 19, name: 'Leandro Trossard',    age: 30, nat: 'Belgian',    contract: 'Jun 2027', value: '£22M' },
+          { num: 20, name: 'Noni Madueke',        age: 23, nat: 'English',    contract: 'Jun 2030', value: '£43M',  status: 'new', loanNote: 'Signed from Chelsea' },
+          { num: 21, name: 'Fabio Vieira',        age: 24, nat: 'Portuguese', contract: 'Jun 2027', value: '£13M',  status: 'loanOut', loanNote: 'On loan → Hamburg' },
+          { num: 22, name: 'Ethan Nwaneri',       age: 18, nat: 'English',    contract: 'Jun 2030', value: '£34M' },
+          { num: 24, name: 'Reiss Nelson',        age: 25, nat: 'English',    contract: 'Jun 2027', value: '£9M',   status: 'loanOut', loanNote: 'On loan → Brentford' },
+          { num: 29, name: 'Kai Havertz',         age: 25, nat: 'German',     contract: 'Jun 2028', value: '£55M' },
+        ],
+      };
 
-        const groups = { Goalkeeper: [], Defence: [], Midfield: [], Offence: [] };
-        const labels = { Goalkeeper: '🧤 Goalkeepers', Defence: '🛡️ Defenders', Midfield: '⚙️ Midfielders', Offence: '⚡ Forwards' };
+      const labels = {
+        Goalkeeper: '🧤 Goalkeepers',
+        Defence:    '🛡️ Defenders',
+        Midfield:   '⚙️ Midfielders',
+        Offence:    '⚡ Forwards',
+      };
 
-        squad.forEach(p => { if (groups[p.position]) groups[p.position].push(p); });
+      const badgeHTML = p => {
+        const badges = [];
+        if (p.captain)              badges.push('<span class="p-badge p-badge-captain">&#9839; Captain</span>');
+        if (p.status === 'loanOut') badges.push('<span class="p-badge p-badge-loan-out">Loan Out</span>');
+        if (p.status === 'loanIn')  badges.push('<span class="p-badge p-badge-loan-in">Loan In</span>');
+        if (p.status === 'new')     badges.push('<span class="p-badge p-badge-new">New Signing</span>');
+        return badges.length ? `<div class="player-status-badges">${badges.join('')}</div>` : '';
+      };
 
-        const html = Object.entries(groups).map(([pos, players]) => {
-          if (!players.length) return '';
-          players.sort((a, b) => (a.shirtNumber || 99) - (b.shirtNumber || 99));
-          const cards = players.map(p => `
-            <div class="player-card" onclick="this.classList.toggle('expanded')">
-              <div class="player-number">${p.shirtNumber ?? '—'}</div>
-              <div class="player-name">${p.name}</div>
-              <div class="player-meta">${flagEmoji(p.nationality)} ${p.nationality || ''}</div>
-              <div class="player-detail">
-                <div>&#128197; Born: ${p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
-                <div>&#127937; Age: ${calcAge(p.dateOfBirth)}</div>
-                <div>&#127963; Position: ${p.position}</div>
-              </div>
+      const html = Object.entries(SQUAD).map(([pos, players]) => {
+        const cards = players.map(p => `
+          <div class="player-card" onclick="this.classList.toggle('expanded')">
+            <div class="player-card-top">
+              <div class="player-number">${p.num}</div>
+              <div class="player-flag">${flagEmoji(p.nat)}</div>
             </div>
-          `).join('');
-          return `<div class="position-group">
-            <div class="position-label">${labels[pos]}</div>
-            <div class="squad-grid">${cards}</div>
-          </div>`;
-        }).join('');
+            <div class="player-name">${p.name}</div>
+            <div class="player-nat">${p.nat}</div>
+            ${badgeHTML(p)}
+            <div class="player-detail">
+              <div class="detail-row">
+                <span class="detail-icon">&#127937;</span>
+                <span class="detail-label">Age</span>
+                <span class="detail-val">${p.age}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-icon">&#128197;</span>
+                <span class="detail-label">Contract</span>
+                <span class="detail-val">${p.contract}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-icon">&#128176;</span>
+                <span class="detail-label">Value</span>
+                <span class="detail-val green">${p.value}</span>
+              </div>
+              ${p.loanNote ? `<div class="detail-loan-note">&#8594; ${p.loanNote}</div>` : ''}
+            </div>
+          </div>
+        `).join('');
+        return `<div class="position-group">
+          <div class="position-label">${labels[pos]}</div>
+          <div class="squad-grid">${cards}</div>
+        </div>`;
+      }).join('');
 
-        el.innerHTML = html || infoBox('No squad data available.');
-      } catch (e) {
-        el.innerHTML = errBox('Could not load squad. ' + e.message);
-      }
+      document.getElementById('squad-container').innerHTML = html;
     }
 
     // ================================================================
@@ -1855,6 +1945,8 @@
       btn.textContent = '\u21BB Loading\u2026';
       btn.disabled = true;
 
+      loadSquad();
+
       await Promise.allSettled([
         loadNextMatch(),
         loadStandings(),
@@ -1862,7 +1954,6 @@
         loadResults(),
         loadScorersAndAssists(),
         loadNews(),
-        loadSquad(),
       ]);
 
       btn.textContent = '\u21BB Refresh';
