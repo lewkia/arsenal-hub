@@ -8,7 +8,6 @@
   <title>The Arsenal Hub By Polla</title>
   <!-- Favicon: football emoji as SVG -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x26BD;</text></svg>">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     /* ============================================================
@@ -937,187 +936,39 @@
     }
     .player-card.expanded .player-detail { display: block; }
 
-    /* ============================================================
-       SECTION 10 — INJURY TRACKER
-    ============================================================ */
-    .injury-wrap {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .injury-table { width: 100%; border-collapse: collapse; min-width: 400px; }
-    .injury-table th {
-      background: rgba(239,1,7,0.12);
-      color: var(--secondary);
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 0.65rem 0.75rem;
-      text-align: left;
-      white-space: nowrap;
-    }
-    .injury-table td {
-      padding: 0.6rem 0.75rem;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.84rem;
-      vertical-align: middle;
-    }
-    .injury-table tbody tr:last-child td { border-bottom: none; }
-    .injury-table tbody tr:hover { background: rgba(255,255,255,0.02); }
-    .status-dot {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.18rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .s-out       { background: rgba(239,68,68,0.15);  color: #fca5a5; }
-    .s-doubtful  { background: rgba(234,179,8,0.15);  color: #fde047; }
-    .s-available { background: rgba(34,197,94,0.15);  color: #86efac; }
-    .injury-note {
-      font-size: 0.73rem;
-      color: var(--secondary);
-      margin-top: 0.6rem;
-      text-align: right;
-      font-style: italic;
-    }
 
     /* ============================================================
-       SECTION 11 — HEAD TO HEAD
+       BACK TO TOP BUTTON
     ============================================================ */
-    .h2h-select {
-      width: 100%;
-      max-width: 340px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--white);
-      padding: 0.55rem 2rem 0.55rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
+    #back-to-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.25rem;
+      z-index: 500;
+      width: 44px;
+      height: 44px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.2rem;
       cursor: pointer;
-      outline: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23aaa' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.75rem center;
-      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(239,1,7,0.45);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s;
     }
-    .h2h-select:focus { border-color: var(--red); }
-    .h2h-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+    #back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
-    .h2h-stat {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem 0.75rem;
-      text-align: center;
-    }
-    .h2h-stat.ars-wins  { border-color: rgba(34,197,94,0.35); }
-    .h2h-stat.draws     { border-color: rgba(234,179,8,0.35); }
-    .h2h-stat.opp-wins  { border-color: rgba(239,68,68,0.35); }
-    .h2h-big { font-size: 2.2rem; font-weight: 900; line-height: 1; }
-    .h2h-stat.ars-wins .h2h-big  { color: var(--win); }
-    .h2h-stat.draws    .h2h-big  { color: var(--draw); }
-    .h2h-stat.opp-wins .h2h-big  { color: var(--loss); }
-    .h2h-lbl { font-size: 0.7rem; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.3rem; }
-    .win-bar-wrap {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 0.9rem 1rem;
-      margin-bottom: 1rem;
-    }
-    .win-bar-header { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--secondary); margin-bottom: 0.45rem; }
-    .win-bar-track  { background: rgba(255,255,255,0.07); border-radius: 999px; height: 9px; overflow: hidden; }
-    .win-bar-fill   { height: 100%; background: var(--red); border-radius: 999px; transition: width 0.9s ease; }
-
-    /* ============================================================
-       SECTION 12 — SEASON STATS
-    ============================================================ */
-    .goals-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .goal-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem 1rem;
-      text-align: center;
-    }
-    .goal-card.scored  { border-color: rgba(239,1,7,0.35); }
-    .goal-card.conceded{ border-color: rgba(255,255,255,0.12); }
-    .goal-big { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; line-height: 1; color: var(--red); }
-    .goal-card.conceded .goal-big { color: var(--secondary); }
-    .goal-label { font-size: 0.72rem; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.35rem; }
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .chart-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem;
-    }
-    .chart-title { font-size: 0.75rem; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
-    .stats-mini-row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .mini-stat {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 0.85rem;
-      text-align: center;
-    }
-    .mini-num   { font-size: 1.7rem; font-weight: 900; color: var(--red); line-height: 1; }
-    .mini-label { font-size: 0.68rem; color: var(--secondary); margin-top: 0.2rem; }
-    .hva-wrap {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .hva-table { width: 100%; border-collapse: collapse; }
-    .hva-table th { background: rgba(239,1,7,0.1); color: var(--secondary); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; padding: 0.6rem 0.75rem; text-align: center; }
-    .hva-table th:first-child { text-align: left; }
-    .hva-table td { padding: 0.55rem 0.75rem; text-align: center; border-top: 1px solid var(--border); font-size: 0.85rem; }
-    .hva-table td:first-child { text-align: left; font-weight: 700; }
-    @media (min-width: 768px) {
-      .charts-grid    { grid-template-columns: 1fr 1fr; }
-      .stats-mini-row { grid-template-columns: repeat(4, 1fr); }
-    }
-
-    /* ============================================================
-       SECTION 13 — ON THIS DAY
-    ============================================================ */
-    .otd-card {
-      background: linear-gradient(135deg, var(--bg-card) 0%, #1a2a50 100%);
-      border: 1px solid rgba(239,1,7,0.2);
-      border-left: 4px solid var(--red);
-      border-radius: var(--radius);
-      padding: 1.1rem 1.25rem;
-      margin-bottom: 0.75rem;
-    }
-    .otd-date { font-size: 0.72rem; color: var(--red); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .otd-fact { font-size: 0.92rem; color: var(--white); line-height: 1.5; }
-    .otd-random-label { font-size: 0.7rem; color: var(--secondary); font-style: italic; margin-bottom: 1rem; }
+    #back-to-top:hover  { background: var(--red-dark); }
+    #back-to-top:active { transform: scale(0.93); }
   </style>
 </head>
 <body>
@@ -1143,10 +994,8 @@
       <li><a href="#s-standings"  data-section="s-standings">Table</a></li>
       <li><a href="#s-fixtures"   data-section="s-fixtures">Fixtures</a></li>
       <li><a href="#s-results"    data-section="s-results">Results</a></li>
-      <li><a href="#s-season-stats" data-section="s-season-stats">Stats</a></li>
       <li><a href="#s-squad"      data-section="s-squad">Squad</a></li>
       <li><a href="#s-news"       data-section="s-news">News</a></li>
-      <li><a href="#s-on-this-day" data-section="s-on-this-day">History</a></li>
     </ul>
   </nav>
 
@@ -1255,50 +1104,6 @@
       </div>
     </section>
 
-    <!-- -------------------------------------------------------
-         SECTION 10: INJURY TRACKER
-    ------------------------------------------------------- -->
-    <section class="section" id="s-injuries">
-      <div class="section-header">
-        <h2 class="section-title">Injury &amp; Availability</h2>
-      </div>
-      <div id="injuries-container"></div>
-    </section>
-
-    <!-- -------------------------------------------------------
-         SECTION 11: HEAD TO HEAD
-    ------------------------------------------------------- -->
-    <section class="section" id="s-h2h">
-      <div class="section-header">
-        <h2 class="section-title">Head to Head</h2>
-      </div>
-      <div id="h2h-container">
-        <div class="loading"><div class="spinner"></div></div>
-      </div>
-    </section>
-
-    <!-- -------------------------------------------------------
-         SECTION 12: SEASON STATS
-    ------------------------------------------------------- -->
-    <section class="section" id="s-season-stats">
-      <div class="section-header">
-        <h2 class="section-title">Season Stats</h2>
-      </div>
-      <div id="season-stats-container">
-        <div class="loading"><div class="spinner"></div></div>
-      </div>
-    </section>
-
-    <!-- -------------------------------------------------------
-         SECTION 13: ON THIS DAY
-    ------------------------------------------------------- -->
-    <section class="section" id="s-on-this-day">
-      <div class="section-header">
-        <h2 class="section-title">On This Day</h2>
-      </div>
-      <div id="otd-container"></div>
-    </section>
-
   </main>
 
   <!-- ================================================================
@@ -1312,6 +1117,8 @@
       </a>
     </div>
   </footer>
+
+  <button id="back-to-top" aria-label="Back to top">&#8679;</button>
 
   <!-- ================================================================
        JAVASCRIPT
@@ -1997,364 +1804,15 @@
     }
 
     // ================================================================
-    // SECTION 10 — INJURY & AVAILABILITY TRACKER (Static — manually updated)
-    // Update the INJURIES array below to reflect current squad status.
+    // BACK TO TOP
     // ================================================================
-    const INJURIES = [
-      { name: 'Kieran Tierney',    injury: 'Knee ligament',     return: 'Long-term',    status: 'out'       },
-      { name: 'Takehiro Tomiyasu', injury: 'Knee surgery',      return: 'Long-term',    status: 'out'       },
-      { name: 'Oleksandr Zinchenko', injury: 'Calf strain',     return: 'Feb 2026',     status: 'out'       },
-      { name: 'Gabriel Magalhães', injury: 'Hamstring',         return: 'Mar 2026',     status: 'doubtful'  },
-      { name: 'Raheem Sterling',   injury: 'Ankle knock',       return: 'Mar 2026',     status: 'doubtful'  },
-      { name: 'Bukayo Saka',       injury: 'Hamstring surgery', return: 'Apr 2026',     status: 'out'       },
-      { name: 'Ethan Nwaneri',     injury: 'Groin',             return: 'Available',    status: 'available' },
-      { name: 'Martin Ødegaard',   injury: 'Ankle',             return: 'Mar 2026',     status: 'doubtful'  },
-    ];
-    const INJURY_LAST_UPDATED = '7 Mar 2026';
-
-    function renderInjuries() {
-      const el = document.getElementById('injuries-container');
-      const statusMap = {
-        out:       { cls: 's-out',       icon: '🔴', label: 'Out'       },
-        doubtful:  { cls: 's-doubtful',  icon: '🟡', label: 'Doubtful'  },
-        available: { cls: 's-available', icon: '🟢', label: 'Available' },
-      };
-      const rows = INJURIES.map(p => {
-        const s = statusMap[p.status] || statusMap.available;
-        return `<tr>
-          <td><strong>${p.name}</strong></td>
-          <td>${p.injury}</td>
-          <td>${p.return}</td>
-          <td><span class="status-dot ${s.cls}">${s.icon} ${s.label}</span></td>
-        </tr>`;
-      }).join('');
-      el.innerHTML = `
-        <div class="injury-wrap" style="overflow-x:auto">
-          <table class="injury-table">
-            <thead><tr><th>Player</th><th>Injury</th><th>Expected Return</th><th>Status</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-        <p class="injury-note">Last updated: ${INJURY_LAST_UPDATED} — update manually in the code</p>
-      `;
-    }
-
-    // ================================================================
-    // SECTION 11 — HEAD TO HEAD
-    // Fetch: /teams/57/matches?status=FINISHED&limit=100&competitions=PL
-    // ================================================================
-    let h2hMatches = [];
-
-    async function loadH2H() {
-      const el = document.getElementById('h2h-container');
-      el.innerHTML = LOADING;
-      try {
-        const data = await apiFetch(`/teams/${ARSENAL_ID}/matches?status=FINISHED&limit=100&competitions=PL`);
-        h2hMatches = data.matches || [];
-
-        // Build unique opponent list
-        const opponents = {};
-        h2hMatches.forEach(m => {
-          const opp = m.homeTeam.id === ARSENAL_ID ? m.awayTeam : m.homeTeam;
-          if (opp.id !== ARSENAL_ID) opponents[opp.id] = opp.name;
-        });
-        const sorted = Object.entries(opponents).sort((a, b) => a[1].localeCompare(b[1]));
-
-        const options = sorted.map(([id, name]) => `<option value="${id}">${name}</option>`).join('');
-
-        el.innerHTML = `
-          <select class="h2h-select" id="h2h-select">
-            <option value="">— Select an opponent —</option>
-            ${options}
-          </select>
-          <div id="h2h-result"></div>
-        `;
-        document.getElementById('h2h-select').addEventListener('change', renderH2H);
-      } catch (e) {
-        el.innerHTML = errBox('Could not load H2H data. ' + e.message);
-      }
-    }
-
-    function renderH2H() {
-      const oppId  = parseInt(document.getElementById('h2h-select').value);
-      const resEl  = document.getElementById('h2h-result');
-      if (!oppId) { resEl.innerHTML = ''; return; }
-
-      const matches = h2hMatches.filter(m =>
-        m.homeTeam.id === oppId || m.awayTeam.id === oppId
-      ).sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate));
-
-      if (!matches.length) { resEl.innerHTML = infoBox('No matches found against this opponent.'); return; }
-
-      let wins = 0, draws = 0, losses = 0;
-      matches.forEach(m => {
-        const isHome = m.homeTeam.id === ARSENAL_ID;
-        const aG = isHome ? m.score.fullTime.home : m.score.fullTime.away;
-        const oG = isHome ? m.score.fullTime.away : m.score.fullTime.home;
-        if (aG > oG) wins++; else if (aG === oG) draws++; else losses++;
-      });
-
-      const total   = matches.length;
-      const winRate = Math.round((wins / total) * 100);
-      const oppName = (matches[0].homeTeam.id === ARSENAL_ID ? matches[0].awayTeam : matches[0].homeTeam).name;
-
-      const last5 = matches.slice(0, 5).map(m => {
-        const isHome = m.homeTeam.id === ARSENAL_ID;
-        const aG = isHome ? m.score.fullTime.home : m.score.fullTime.away;
-        const oG = isHome ? m.score.fullTime.away : m.score.fullTime.home;
-        const r = aG > oG ? 'W' : aG === oG ? 'D' : 'L';
-        const cls = r === 'W' ? 'win' : r === 'D' ? 'draw' : 'loss';
-        const homeArs = m.homeTeam.id === ARSENAL_ID;
-        return `<div class="result-card ${cls}" style="margin-bottom:0.5rem">
-          <div class="card-header">
-            ${compBadge(m.competition.name)}
-            <span class="card-date">${fmtDate(m.utcDate)}</span>
-            <span class="result-badge ${cls}">${r}</span>
-          </div>
-          <div class="card-teams">
-            <div class="card-team">
-              <img src="${m.homeTeam.crest}" class="card-crest" onerror="this.style.display='none'">
-              <span class="${homeArs ? 'arsenal-name' : ''}">${m.homeTeam.shortName || m.homeTeam.name}</span>
-            </div>
-            <div class="result-score">${m.score.fullTime.home}&ndash;${m.score.fullTime.away}</div>
-            <div class="card-team right">
-              <span class="${!homeArs ? 'arsenal-name' : ''}">${m.awayTeam.shortName || m.awayTeam.name}</span>
-              <img src="${m.awayTeam.crest}" class="card-crest" onerror="this.style.display='none'">
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-
-      resEl.innerHTML = `
-        <div class="h2h-stats-grid">
-          <div class="h2h-stat ars-wins"><div class="h2h-big">${wins}</div><div class="h2h-lbl">Arsenal Wins</div></div>
-          <div class="h2h-stat draws">   <div class="h2h-big">${draws}</div><div class="h2h-lbl">Draws</div></div>
-          <div class="h2h-stat opp-wins"><div class="h2h-big">${losses}</div><div class="h2h-lbl">${oppName.split(' ').pop()} Wins</div></div>
-        </div>
-        <div class="win-bar-wrap">
-          <div class="win-bar-header">
-            <span>Arsenal win rate vs ${oppName}</span><span>${winRate}% (${total} games)</span>
-          </div>
-          <div class="win-bar-track"><div class="win-bar-fill" style="width:${winRate}%"></div></div>
-        </div>
-        <h3 style="font-size:0.8rem;color:var(--secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem">Last 5 Meetings</h3>
-        ${last5}
-      `;
-    }
-
-    // ================================================================
-    // SECTION 12 — SEASON STATS DASHBOARD
-    // Fetch all finished PL matches this season, build charts with Chart.js
-    // ================================================================
-    let seasonCharts = {};
-
-    async function loadSeasonStats() {
-      const el = document.getElementById('season-stats-container');
-      el.innerHTML = LOADING;
-      try {
-        // Determine current season start (Aug of current or previous year)
-        const now = new Date();
-        const yr  = now.getMonth() >= 7 ? now.getFullYear() : now.getFullYear() - 1;
-        const dateFrom = `${yr}-08-01`;
-
-        const data    = await apiFetch(`/teams/${ARSENAL_ID}/matches?status=FINISHED&dateFrom=${dateFrom}&limit=60`);
-        const matches = data.matches || [];
-        if (!matches.length) { el.innerHTML = infoBox('No season data yet.'); return; }
-
-        // Aggregate stats
-        let scored = 0, conceded = 0, wins = 0, draws = 0, losses = 0;
-        let cleanSheets = 0;
-        let homeW = 0, homeD = 0, homeL = 0, awayW = 0, awayD = 0, awayL = 0;
-        const monthGoals = {};
-
-        matches.forEach(m => {
-          const isHome = m.homeTeam.id === ARSENAL_ID;
-          const gf = isHome ? m.score.fullTime.home : m.score.fullTime.away;
-          const ga = isHome ? m.score.fullTime.away : m.score.fullTime.home;
-          if (gf == null || ga == null) return;
-          scored   += gf;
-          conceded += ga;
-          if (ga === 0) cleanSheets++;
-          const mo = new Date(m.utcDate).toLocaleString('en-GB', { month: 'short', year: '2-digit' });
-          monthGoals[mo] = (monthGoals[mo] || 0) + gf;
-          if (gf > ga) { wins++;   isHome ? homeW++ : awayW++; }
-          else if (gf === ga) { draws++;  isHome ? homeD++ : awayD++; }
-          else        { losses++; isHome ? homeL++ : awayL++; }
-        });
-
-        const total  = wins + draws + losses;
-        const avgGpg = total ? (scored / total).toFixed(1) : '0.0';
-
-        el.innerHTML = `
-          <div class="goals-row">
-            <div class="goal-card scored">
-              <div class="goal-big">${scored}</div>
-              <div class="goal-label">Goals Scored</div>
-            </div>
-            <div class="goal-card conceded">
-              <div class="goal-big">${conceded}</div>
-              <div class="goal-label">Goals Conceded</div>
-            </div>
-          </div>
-          <div class="stats-mini-row">
-            <div class="mini-stat"><div class="mini-num">${total}</div><div class="mini-label">Games Played</div></div>
-            <div class="mini-stat"><div class="mini-num">${cleanSheets}</div><div class="mini-label">Clean Sheets</div></div>
-            <div class="mini-stat"><div class="mini-num">${avgGpg}</div><div class="mini-label">Avg Goals/Game</div></div>
-            <div class="mini-stat"><div class="mini-num">${wins}</div><div class="mini-label">Wins</div></div>
-          </div>
-          <div class="charts-grid">
-            <div class="chart-card">
-              <div class="chart-title">Win / Draw / Loss</div>
-              <canvas id="chart-wdl" height="220"></canvas>
-            </div>
-            <div class="chart-card">
-              <div class="chart-title">Goals Scored by Month</div>
-              <canvas id="chart-monthly" height="220"></canvas>
-            </div>
-          </div>
-          <div class="hva-wrap">
-            <table class="hva-table">
-              <thead><tr><th></th><th>W</th><th>D</th><th>L</th><th>GF</th></tr></thead>
-              <tbody>
-                <tr><td>Home</td><td>${homeW}</td><td>${homeD}</td><td>${homeL}</td><td style="color:var(--red)">${homeW+homeD+homeL > 0 ? matches.filter(m=>m.homeTeam.id===ARSENAL_ID).reduce((s,m)=>s+(m.score.fullTime.home||0),0) : 0}</td></tr>
-                <tr><td>Away</td><td>${awayW}</td><td>${awayD}</td><td>${awayL}</td><td style="color:var(--red)">${homeW+homeD+homeL > 0 ? matches.filter(m=>m.awayTeam.id===ARSENAL_ID).reduce((s,m)=>s+(m.score.fullTime.away||0),0) : 0}</td></tr>
-              </tbody>
-            </table>
-          </div>
-        `;
-
-        // Destroy old charts if they exist (on refresh)
-        Object.values(seasonCharts).forEach(c => c.destroy());
-        seasonCharts = {};
-
-        // Donut chart: W/D/L
-        seasonCharts.wdl = new Chart(document.getElementById('chart-wdl'), {
-          type: 'doughnut',
-          data: {
-            labels: ['Wins', 'Draws', 'Losses'],
-            datasets: [{ data: [wins, draws, losses], backgroundColor: ['#22c55e','#eab308','#ef4444'], borderWidth: 0, hoverOffset: 6 }]
-          },
-          options: { plugins: { legend: { labels: { color: '#aaa', font: { size: 11 } } } }, cutout: '65%' }
-        });
-
-        // Bar chart: goals by month
-        const months = Object.keys(monthGoals);
-        const goals  = months.map(m => monthGoals[m]);
-        seasonCharts.monthly = new Chart(document.getElementById('chart-monthly'), {
-          type: 'bar',
-          data: {
-            labels: months,
-            datasets: [{ label: 'Goals', data: goals, backgroundColor: '#EF0107', borderRadius: 4 }]
-          },
-          options: {
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { ticks: { color: '#aaa', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-              y: { ticks: { color: '#aaa', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' } }
-            }
-          }
-        });
-
-      } catch (e) {
-        el.innerHTML = errBox('Could not load season stats. ' + e.message);
-      }
-    }
-
-    // ================================================================
-    // SECTION 13 — ON THIS DAY
-    // Static array of Arsenal historical facts matched to today's date.
-    // ================================================================
-    const OTD_FACTS = [
-      { m:1,  d:1,  text:'1 Jan 2012 — Arsenal beat Fulham 2–1 at Craven Cottage on New Year\'s Day.' },
-      { m:1,  d:12, text:'12 Jan 2003 — Thierry Henry wins the BBC Sports Personality of the Year award.' },
-      { m:1,  d:18, text:'18 Jan 2003 — Arsenal beat Oxford Utd 2–0 in the FA Cup Third Round.' },
-      { m:1,  d:20, text:'20 Jan 1996 — Arsène Wenger\'s first full season sees Arsenal beat Everton 3–1.' },
-      { m:2,  d:1,  text:'1 Feb 2003 — Arsenal beat Manchester United 2–0 at Highbury in the Premier League.' },
-      { m:2,  d:14, text:'14 Feb 2012 — Arsenal beat AC Milan 4–0 at the Nou Camp — one of the great European nights.' },
-      { m:2,  d:26, text:'26 Feb 1993 — Arsenal beat Sheffield Wednesday 2–1 in the League Cup Final.' },
-      { m:2,  d:19, text:'19 Feb 2020 — Arsenal beat Everton 3–2 in the fifth round of the FA Cup.' },
-      { m:3,  d:4,  text:'4 Mar 2012 — Robin van Persie scores a stunning late winner against Sunderland.' },
-      { m:3,  d:16, text:'16 Mar 1994 — Arsenal reach the European Cup Winners\' Cup semi-final.' },
-      { m:3,  d:21, text:'21 Mar 2004 — Arsenal go 26 games unbeaten in the Premier League during The Invincibles season.' },
-      { m:3,  d:28, text:'28 Mar 1998 — Arsenal beat Bolton 1–0 as the Double-winning season gathers pace.' },
-      { m:4,  d:3,  text:'3 Apr 1971 — Arsenal clinch the First Division title at White Hart Lane.' },
-      { m:4,  d:14, text:'14 Apr 2001 — Freddie Ljungberg scores as Arsenal beat Tottenham 2–0.' },
-      { m:4,  d:16, text:'16 Apr 2005 — FA Cup semi-final: Arsenal beat Blackburn Rovers 3–0 at Cardiff.' },
-      { m:4,  d:26, text:'26 Apr 2015 — Per Mertesacker scores as Arsenal beat Chelsea 1–0 at Wembley in the FA Cup semi.' },
-      { m:5,  d:4,  text:'4 May 2004 — Arsenal clinch the Premier League title unbeaten — The Invincibles.' },
-      { m:5,  d:6,  text:'6 May 2012 — Robin van Persie scores his 30th Premier League goal of the season.' },
-      { m:5,  d:8,  text:'8 May 2005 — Arsenal win the FA Cup final on penalties against Manchester United.' },
-      { m:5,  d:10, text:'10 May 1998 — Arsenal beat Everton 4–0 to clinch the Premier League title and complete the Double.' },
-      { m:5,  d:12, text:'12 May 2019 — Arsenal beat Burnley 3–1 on the final day of the 2018/19 season.' },
-      { m:5,  d:14, text:'14 May 1994 — Arsenal beat Parma 1–0 in the European Cup Winners\' Cup Final. Alan Smith scores.' },
-      { m:5,  d:15, text:'15 May 1971 — Arsenal beat Liverpool 2–1 in the FA Cup Final to complete the Double.' },
-      { m:5,  d:17, text:'17 May 2003 — Arsenal beat Southampton 1–0 in the FA Cup Final at the Millennium Stadium.' },
-      { m:5,  d:21, text:'21 May 2005 — Arsenal win the FA Cup on penalties at Cardiff\'s Millennium Stadium.' },
-      { m:5,  d:26, text:'26 May 1989 — Michael Thomas scores in the 91st minute to win the league title at Anfield.' },
-      { m:5,  d:27, text:'27 May 2006 — Arsenal reach the Champions League Final, losing 2–1 to Barcelona in Paris.' },
-      { m:6,  d:1,  text:'1 Jun 2006 — Arsène Wenger signs a new long-term contract at Arsenal.' },
-      { m:6,  d:17, text:'17 Jun 1996 — Arsène Wenger is appointed Arsenal manager.' },
-      { m:7,  d:1,  text:'1 Jul 2011 — Arsenal sign Gervinho from Lille.' },
-      { m:7,  d:3,  text:'3 Jul 2012 — Arsenal sign Lukas Podolski from Cologne.' },
-      { m:7,  d:4,  text:'4 Jul 2019 — Arsenal confirm Nicolas Pépé signing for a club-record £72 million.' },
-      { m:7,  d:14, text:'14 Jul 2011 — Arsenal sign Per Mertesacker from Werder Bremen.' },
-      { m:8,  d:1,  text:'1 Aug 2014 — Arsenal beat Manchester City 3–0 in the Community Shield at Wembley.' },
-      { m:8,  d:12, text:'12 Aug 2012 — Arsenal beat Sunderland 0–0 on the opening day, Lukas Podolski makes his debut.' },
-      { m:8,  d:22, text:'22 Aug 2009 — Arsenal thrash Portsmouth 4–1 on the opening day of the season.' },
-      { m:9,  d:11, text:'11 Sep 2004 — Thierry Henry scores a hat-trick in a 4–1 win over Middlesbrough.' },
-      { m:9,  d:25, text:'25 Sep 2012 — Arsenal beat Coventry City 6–1 in the League Cup.' },
-      { m:10, d:5,  text:'5 Oct 2002 — Thierry Henry scores a hat-trick against Charlton in a 3–0 win.' },
-      { m:10, d:14, text:'14 Oct 2001 — Lauren scores a rare goal as Arsenal beat Charlton 2–0.' },
-      { m:10, d:19, text:'19 Oct 1996 — Arsène Wenger watches his first match in charge: a 0–0 draw at Blackburn.' },
-      { m:10, d:25, text:'25 Oct 2003 — Arsenal go 24 games unbeaten in the League during The Invincibles run.' },
-      { m:11, d:8,  text:'8 Nov 2003 — Arsenal beat Tottenham 2–1 in the North London Derby at Highbury.' },
-      { m:11, d:14, text:'14 Nov 2001 — Freddie Ljungberg wins his second consecutive League title with Arsenal.' },
-      { m:11, d:22, text:'22 Nov 2003 — Arsenal beat Birmingham 3–0 as the unbeaten run continues.' },
-      { m:12, d:9,  text:'9 Dec 1997 — Arsenal beat Barnsley 3–2 at Highbury. Marc Overmars grabs a brace.' },
-      { m:12, d:12, text:'12 Dec 2004 — Arsenal\'s 49-game unbeaten league run ends at Old Trafford, losing 2–0 to Man Utd.' },
-      { m:12, d:15, text:'15 Dec 2002 — Thierry Henry scores two stunning long-range goals against Charlton.' },
-      { m:12, d:18, text:'18 Dec 2004 — Arsenal beat Chelsea 2–1 at Highbury — a classic Premier League clash.' },
-      { m:12, d:26, text:'26 Dec 1997 — Marc Overmars terrorises Leicester as Arsenal win 2–1 in a Boxing Day classic.' },
-      { m:1,  d:26, text:'26 Jan 2003 — Thierry Henry grabs a brace as Arsenal beat Manchester United 2–0 at Highbury.' },
-      { m:2,  d:10, text:'10 Feb 2007 — Theo Walcott becomes the youngest Arsenal scorer at 17 years old.' },
-      { m:3,  d:31, text:'31 Mar 2018 — Arsenal beat Stoke City 3–0 as the Wenger era enters its final weeks.' },
-      { m:4,  d:29, text:'29 Apr 2018 — Arsène Wenger announces he will leave Arsenal at the end of the 2017/18 season.' },
-      { m:5,  d:19, text:'19 May 2017 — Arsenal win the FA Cup, beating Chelsea 2–1 at Wembley — Aaron Ramsey scores.' },
-      { m:8,  d:6,  text:'6 Aug 2017 — Arsenal beat Chelsea 4–1 in the Community Shield, a stunning performance.' },
-      { m:10, d:29, text:'29 Oct 2023 — Arsenal go top of the Premier League with a dominant 5–0 win over Sheffield United.' },
-      { m:11, d:4,  text:'4 Nov 2023 — Leandro Trossard fires Arsenal to a 1–0 win over Luton Town.' },
-      { m:1,  d:7,  text:'7 Jan 2024 — Arsenal beat Liverpool 2–0 in the FA Cup Third Round at the Emirates.' },
-      { m:3,  d:9,  text:'9 Mar 2024 — Bukayo Saka scores twice as Arsenal beat Brentford 2–1.' },
-    ];
-
-    function renderOnThisDay() {
-      const el = document.getElementById('otd-container');
-      const today = new Date();
-      const m = today.getMonth() + 1;
-      const d = today.getDate();
-
-      const matches = OTD_FACTS.filter(f => f.m === m && f.d === d);
-
-      if (matches.length) {
-        el.innerHTML = matches.map(f => `
-          <div class="otd-card">
-            <div class="otd-date">&#9917; On This Day — ${today.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}</div>
-            <div class="otd-fact">${f.text}</div>
-          </div>
-        `).join('');
-      } else {
-        // Show a random fact
-        const rand = OTD_FACTS[Math.floor(Math.random() * OTD_FACTS.length)];
-        const months = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        el.innerHTML = `
-          <p class="otd-random-label">No fact for today — here's a random Arsenal moment:</p>
-          <div class="otd-card">
-            <div class="otd-date">&#9917; ${months[rand.m]} ${rand.d}</div>
-            <div class="otd-fact">${rand.text}</div>
-          </div>
-        `;
-      }
-    }
+    (function() {
+      const btn = document.getElementById('back-to-top');
+      window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 300);
+      }, { passive: true });
+      btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    })();
 
     // ================================================================
     // NAVIGATION — Highlight active section on scroll
@@ -2405,13 +1863,7 @@
         loadScorersAndAssists(),
         loadNews(),
         loadSquad(),
-        loadH2H(),
-        loadSeasonStats(),
       ]);
-
-      // Static sections — no API needed
-      renderInjuries();
-      renderOnThisDay();
 
       btn.textContent = '\u21BB Refresh';
       btn.disabled = false;
@@ -2429,8 +1881,6 @@
 
     // Boot!
     initNav();
-    renderInjuries();
-    renderOnThisDay();
     initAll();
   </script>
 </body>
