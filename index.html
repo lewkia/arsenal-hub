@@ -922,6 +922,17 @@
     }
     .player-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(239,1,7,0.3); }
     .player-card.expanded { border-color: var(--red); background: rgba(239,1,7,0.07); }
+    .player-chevron {
+      font-size: 0.7rem;
+      color: var(--secondary);
+      transition: transform 0.2s ease;
+      line-height: 1;
+      flex-shrink: 0;
+      align-self: flex-start;
+      margin-top: 0.2rem;
+    }
+    .player-card.expanded .player-chevron { transform: rotate(180deg); color: var(--red); }
+    .squad-hint { font-size: 0.72rem; color: var(--secondary); margin-bottom: 1rem; font-style: italic; }
     .player-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem; }
     .player-number { font-size: 1.4rem; font-weight: 900; color: var(--red); opacity: 0.65; line-height: 1; flex-shrink: 0; }
     .player-flag   { font-size: 1.1rem; line-height: 1; margin-top: 0.1rem; flex-shrink: 0; }
@@ -1088,6 +1099,7 @@
       <div class="section-header">
         <h2 class="section-title">Squad</h2>
       </div>
+      <p class="squad-hint">&#8595; Tap any card to see age, contract &amp; value</p>
       <div id="squad-container">
         <div class="loading"><div class="spinner"></div></div>
       </div>
@@ -1860,7 +1872,10 @@
           <div class="player-card" onclick="this.classList.toggle('expanded')">
             <div class="player-card-top">
               <div class="player-number">${p.num}</div>
-              <div class="player-flag">${flagEmoji(p.nat)}</div>
+              <div style="display:flex;align-items:flex-start;gap:0.3rem">
+                <div class="player-flag">${flagEmoji(p.nat)}</div>
+                <div class="player-chevron">&#8964;</div>
+              </div>
             </div>
             <div class="player-name">${p.name}</div>
             <div class="player-nat">${p.nat}</div>
