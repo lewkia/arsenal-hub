@@ -1442,13 +1442,6 @@
         const rows = table.map((row, idx) => {
           const isArsenal = row.team.id === ARSENAL_ID;
 
-          // Form badges — API returns "W,W,D,L,W" comma-separated string
-          const formArr = (row.form || '').split(',').filter(Boolean).slice(-5);
-          const formHtml = formArr.map(r => {
-            const cls = r === 'W' ? 'fw' : r === 'D' ? 'fd' : 'fl';
-            return `<span class="form-badge ${cls}">${r}</span>`;
-          }).join('');
-
           // Zone divider CSS class (bottom border of row)
           const zoneCls =
             idx === 3  ? 'zone-ucl' :
@@ -1476,9 +1469,8 @@
               <td class="hide-sm">${row.won}</td>
               <td class="hide-sm">${row.draw}</td>
               <td class="hide-sm">${row.lost}</td>
-              <td class="hide-sm">${gd > 0 ? '+' : ''}${gd}</td>
+              <td>${gd > 0 ? '+' : ''}${gd}</td>
               <td><strong>${row.points}</strong></td>
-              <td class="form-col">${formHtml}</td>
             </tr>
           `;
         }).join('');
@@ -1495,9 +1487,8 @@
                   <th class="hide-sm">W</th>
                   <th class="hide-sm">D</th>
                   <th class="hide-sm">L</th>
-                  <th class="hide-sm">GD</th>
+                  <th>GD</th>
                   <th>Pts</th>
-                  <th>Form</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>
