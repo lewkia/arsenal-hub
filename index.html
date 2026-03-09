@@ -216,19 +216,21 @@
     }
 
     .retry-btn {
-      padding: 0.35rem 0.9rem;
+      padding: 0.45rem 1.25rem;
       border-radius: 999px;
-      border: 1px solid rgba(248,113,113,0.6);
-      background: transparent;
+      border: 1px solid rgba(248,113,113,0.5);
+      background: rgba(248,113,113,0.12);
       color: #fecaca;
       font-size: var(--text-md);
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.06em;
+      transition: background 0.2s, border-color 0.2s;
     }
     .retry-btn:hover {
-      background: rgba(248,113,113,0.15);
+      background: rgba(248,113,113,0.25);
+      border-color: rgba(248,113,113,0.8);
     }
 
     /* ============================================================
@@ -313,7 +315,7 @@
     }
 
     .nm-date { font-size: var(--text-sm); color: var(--secondary); }
-    .nm-time { font-size: 1rem; font-weight: 800; color: var(--red); }
+    .nm-time { font-size: var(--text-lg); font-weight: 800; color: var(--red); }
     .nm-venue { font-size: var(--text-sm); color: var(--secondary); }
 
     /* Countdown */
@@ -346,7 +348,7 @@
     }
 
     .cd-num {
-      font-size: clamp(2rem, 7vw, 3rem);
+      font-size: clamp(1.75rem, 5.5vw, 3rem);
       font-weight: 900;
       color: var(--red);
       line-height: 1;
@@ -362,7 +364,7 @@
     }
 
     .cd-sep {
-      font-size: 2rem;
+      font-size: var(--text-2xl);
       font-weight: 900;
       color: var(--red);
       opacity: 0.45;
@@ -470,9 +472,9 @@
     .arsenal-row td { font-weight: 800 !important; }
 
     /* Zone dividers — inset shadow avoids border-collapse misalignment */
-    .zone-ucl  td { box-shadow: inset 0 -2px 0 rgba(96,165,250,0.6); }
-    .zone-uel  td { box-shadow: inset 0 -2px 0 rgba(251,146,60,0.6); }
-    .zone-rel  td { box-shadow: inset 0 -2px 0 rgba(248,113,113,0.6); }
+    .zone-ucl  td { box-shadow: inset 0 -2px 0 rgba(96,165,250,0.8); }
+    .zone-uel  td { box-shadow: inset 0 -2px 0 rgba(251,146,60,0.8); }
+    .zone-rel  td { box-shadow: inset 0 -2px 0 rgba(248,113,113,0.8); }
 
     /* Position number colour coding */
     .pos-ucl { color: #60a5fa; font-weight: 800; }
@@ -494,23 +496,6 @@
       white-space: nowrap;
     }
 
-    /* Form badges */
-    .form-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 19px;
-      height: 19px;
-      border-radius: 4px;
-      font-size: var(--text-xs);
-      font-weight: 800;
-      margin: 0 1px;
-    }
-    .fw { background: var(--win);  color: #fff; }
-    .fd { background: var(--draw); color: #1a1a2e; }
-    .fl { background: var(--loss); color: #fff; }
-
-    .form-col { white-space: nowrap; }
 
     /* Zone legend */
     .zone-legend {
@@ -532,6 +517,9 @@
       border-radius: 50%;
       flex-shrink: 0;
     }
+    .dot-ucl { background: #60a5fa; }
+    .dot-uel { background: #fb923c; }
+    .dot-rel { background: #f87171; }
 
     /* ============================================================
        SECTION 3 — FIXTURES
@@ -687,8 +675,8 @@
     .scorer-row {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      padding: 0.5rem 0.6rem;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
       border-radius: 8px;
       transition: background 0.2s;
     }
@@ -799,15 +787,17 @@
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
       cursor: pointer;
     }
-    .news-card:hover {
+    .news-card:hover,
+    .news-card:focus-visible {
       transform: translateY(-2px);
       box-shadow: var(--shadow);
       border-color: rgba(239,1,7,0.25);
+      outline: none;
     }
 
     .news-thumb {
-      width: 90px;
-      min-width: 90px;
+      width: clamp(72px, 20vw, 90px);
+      min-width: clamp(72px, 20vw, 90px);
       min-height: 75px;
       background-size: cover;
       background-position: center;
@@ -815,7 +805,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
+      font-size: var(--text-2xl);
     }
 
     .news-body {
@@ -842,6 +832,7 @@
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+      line-clamp: 2;
       overflow: hidden;
     }
 
@@ -849,6 +840,13 @@
       font-size: var(--text-sm);
       color: var(--secondary);
       margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .news-ext {
+      font-size: var(--text-xs);
+      opacity: 0.5;
     }
 
     /* ============================================================
@@ -919,7 +917,7 @@
        SECTION NAV BAR
     ============================================================ */
     .section-nav {
-      background: #0d0d1e;
+      background: var(--bg);
       border-bottom: 1px solid var(--border);
       overflow-x: auto;
       scrollbar-width: none;
@@ -929,6 +927,19 @@
       z-index: 190;
     }
     .section-nav::-webkit-scrollbar { display: none; }
+
+    /* Scroll-hint fade on the right edge */
+    .section-nav::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 2.5rem;
+      background: linear-gradient(to right, transparent, var(--bg));
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1;
+    }
+    .section-nav.nav-end::after { opacity: 0; }
     .nav-list {
       display: flex;
       list-style: none;
@@ -981,7 +992,7 @@
     }
     .squad-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 0.6rem;
     }
     .player-card {
@@ -993,7 +1004,8 @@
       transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
       user-select: none;
     }
-    .player-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(239,1,7,0.3); }
+    .player-card:hover,
+    .player-card:focus-visible { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(239,1,7,0.3); outline: none; }
     .player-card.expanded { border-color: var(--red); background: rgba(239,1,7,0.07); }
     .player-chevron {
       font-size: var(--text-sm);
@@ -1050,7 +1062,7 @@
 
 
     /* ============================================================
-       BACK TO TOP BUTTON
+       BACK TO TOP — CIRCULAR PROGRESS RING
     ============================================================ */
     #back-to-top {
       position: fixed;
@@ -1059,28 +1071,53 @@
       z-index: 500;
       width: 44px;
       height: 44px;
-      background: var(--red);
+      background: rgba(22, 33, 62, 0.92);
       color: #fff;
       border: none;
       border-radius: 50%;
-      font-size: 1.2rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(239,1,7,0.45);
+      padding: 0;
       opacity: 0;
       transform: translateY(12px);
       pointer-events: none;
-      transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      backdrop-filter: blur(6px);
     }
     #back-to-top.visible {
       opacity: 1;
       transform: translateY(0);
       pointer-events: auto;
     }
-    #back-to-top:hover  { background: var(--red-dark); }
     #back-to-top:active { transform: scale(0.93); }
+
+    .btt-ring {
+      position: absolute;
+      inset: 0;
+      width: 44px;
+      height: 44px;
+      transform: rotate(-90deg);
+      pointer-events: none;
+    }
+    .btt-track {
+      fill: none;
+      stroke: rgba(255,255,255,0.12);
+      stroke-width: 2.5;
+    }
+    .btt-progress {
+      fill: none;
+      stroke: var(--red);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.15s linear;
+    }
+    .btt-arrow {
+      position: relative;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
   </style>
 </head>
 <body>
@@ -1234,7 +1271,13 @@
     </div>
   </footer>
 
-  <button id="back-to-top" aria-label="Back to top">&#8679;</button>
+  <button id="back-to-top" aria-label="Back to top">
+    <svg class="btt-ring" viewBox="0 0 44 44" aria-hidden="true">
+      <circle class="btt-track"    cx="22" cy="22" r="18"/>
+      <circle class="btt-progress" cx="22" cy="22" r="18" id="btt-progress-circle"/>
+    </svg>
+    <span class="btt-arrow">&#8679;</span>
+  </button>
 
   <!-- ================================================================
        JAVASCRIPT
@@ -1246,18 +1289,18 @@
     // CONFIGURATION
     // ================================================================
 
-    // Your football-data.org API key
-    const API_KEY    = 'f9632f4efd30435587e2e4c18c7c251d';
-    const ARSENAL_ID = 57;  // Arsenal FC team ID on football-data.org
-    const HEADERS    = { 'X-Auth-Token': API_KEY };
+    // API key — only needed for file:// fallback (CORS proxy).
+    // On Vercel, the serverless function at /api/football/* injects the key server-side.
+    // To use file:// mode locally, replace the empty string with your key (do NOT commit it).
+    const IS_FILE    = window.location.protocol === 'file:';
+    const API_KEY    = IS_FILE ? '' : '';            // set only for local file:// use
+    const ARSENAL_ID = 57;
+    const HEADERS    = API_KEY ? { 'X-Auth-Token': API_KEY } : {};
 
-    // When served from Vercel (or any web server), requests to /api/football/*
-    // are rewritten server-side to football-data.org/v4/* via vercel.json.
-    // Same-origin requests bypass CORS entirely — no preflight, no blocked headers.
-    // When opened as a local file://, fall back to the direct API URL + CORS proxy.
-    const IS_FILE  = window.location.protocol === 'file:';
-    const API_BASE = IS_FILE ? 'https://api.football-data.org/v4' : '/api/football';
-    const API_DIRECT = 'https://api.football-data.org/v4'; // used only by file:// proxy fallback
+    // On Vercel, /api/football/* is handled by the serverless proxy function.
+    // For file:// mode, fall back directly to the API with CORS proxy.
+    const API_BASE   = IS_FILE ? 'https://api.football-data.org/v4' : '/api/football';
+    const API_DIRECT = 'https://api.football-data.org/v4';
 
     // CORS proxy — only invoked for file:// where same-origin rewrite isn't available
     const CORS_PROXY = 'https://corsproxy.io/?url=';
@@ -1302,6 +1345,7 @@
       'UEFA Conference League':{ short: 'UECL',    color: '#00a859' },
       'FA Cup':                { short: 'FA Cup',  color: '#003d7a' },
       'EFL Cup':               { short: 'EFL Cup', color: '#007a4d' },
+      'Carabao Cup':           { short: 'EFL Cup', color: '#007a4d' },
     };
 
     // RSS news feeds — fetched via rssFetch() which uses the CORS proxy
@@ -1359,7 +1403,13 @@
     // COUNTDOWN TIMER
     // ================================================================
 
-    let cdInterval = null;
+    let cdInterval      = null;
+    let autoRefreshTimer = null;
+
+    window.addEventListener('beforeunload', () => {
+      clearInterval(cdInterval);
+      clearTimeout(autoRefreshTimer);
+    });
 
     // Start ticking countdown to `matchDateStr` (ISO UTC string)
     function startCountdown(matchDateStr) {
@@ -1481,6 +1531,17 @@
 
         startCountdown(match.utcDate);
 
+        // Auto-refresh fixtures + next match every 60s when kickoff is within 60 minutes
+        clearTimeout(autoRefreshTimer);
+        const minsUntil = (new Date(match.utcDate) - Date.now()) / 60000;
+        if (minsUntil > 0 && minsUntil <= 60) {
+          autoRefreshTimer = setTimeout(function autoRefresh() {
+            loadNextMatch();
+            loadFixtures();
+            autoRefreshTimer = setTimeout(autoRefresh, 60000);
+          }, 60000);
+        }
+
       } catch (e) {
         el.innerHTML = errBox('Could not load next match. ' + e.message, 'next-match');
       }
@@ -1579,9 +1640,9 @@
             </table>
           </div>
           <div class="zone-legend">
-            <span><span class="dot" style="background:#60a5fa"></span> Champions League</span>
-            <span><span class="dot" style="background:#fb923c"></span> Europa League</span>
-            <span><span class="dot" style="background:#f87171"></span> Relegation</span>
+            <span><span class="dot dot-ucl"></span> Champions League</span>
+            <span><span class="dot dot-uel"></span> Europa League</span>
+            <span><span class="dot dot-rel"></span> Relegation</span>
           </div>
         `;
 
@@ -1783,7 +1844,7 @@
 
       const hasExtra = list.length > 5;
       const toggle = hasExtra ? `
-        <button class="scorers-toggle" type="button">
+        <button class="scorers-toggle" type="button" aria-expanded="false">
           <span class="scorers-toggle-label">Show top 10</span>
           <span class="scorers-toggle-arrow">&#8964;</span>
         </button>` : '';
@@ -1841,7 +1902,7 @@
               <div class="news-body">
                 <span class="news-source" style="color:${a._src.color}">${a._src.name}</span>
                 <h4 class="news-title">${a.title}</h4>
-                <span class="news-date">${dateStr}</span>
+                <span class="news-date">${dateStr}<span class="news-ext">&#8599;</span></span>
               </div>
             </a>
           `;
@@ -1990,13 +2051,25 @@
     }
 
     // ================================================================
-    // BACK TO TOP
+    // BACK TO TOP — with circular scroll progress ring
     // ================================================================
     (function() {
-      const btn = document.getElementById('back-to-top');
+      const btn    = document.getElementById('back-to-top');
+      const circle = document.getElementById('btt-progress-circle');
+
+      // Derive circumference from the element itself so CSS and JS stay in sync
+      const circumference = circle.getTotalLength();
+      circle.style.strokeDasharray  = circumference;
+      circle.style.strokeDashoffset = circumference;
+
       window.addEventListener('scroll', () => {
-        btn.classList.toggle('visible', window.scrollY > 300);
+        const scrolled  = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress  = docHeight > 0 ? Math.min(scrolled / docHeight, 1) : 0;
+        circle.style.strokeDashoffset = circumference * (1 - progress);
+        btn.classList.toggle('visible', scrolled > 300);
       }, { passive: true });
+
       btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     })();
 
@@ -2041,6 +2114,7 @@
       const card = toggleBtn.closest('.scorers-card');
       if (!card) return;
       const expanded = card.classList.toggle('expanded');
+      toggleBtn.setAttribute('aria-expanded', String(expanded));
       const labelEl = toggleBtn.querySelector('.scorers-toggle-label');
       if (labelEl) {
         labelEl.textContent = expanded ? 'Show less' : 'Show top 10';
@@ -2080,11 +2154,16 @@
         });
       });
 
-      // IntersectionObserver for active highlight
+      // IntersectionObserver for active highlight + aria-current
       const obs = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            links.forEach(a => a.classList.toggle('active', a.dataset.section === entry.target.id));
+            links.forEach(a => {
+              const isActive = a.dataset.section === entry.target.id;
+              a.classList.toggle('active', isActive);
+              if (isActive) a.setAttribute('aria-current', 'page');
+              else          a.removeAttribute('aria-current');
+            });
             // Scroll active nav link into view
             const activeLink = document.querySelector(`.nav-list a[data-section="${entry.target.id}"]`);
             if (activeLink && nav) activeLink.scrollIntoView({ inline: 'nearest', block: 'nearest' });
@@ -2093,6 +2172,16 @@
       }, { rootMargin: '-20% 0px -70% 0px' });
 
       sections.forEach(s => obs.observe(s));
+
+      // Scroll-hint fade: hide right gradient when nav is scrolled to end
+      if (nav) {
+        const updateFade = () => {
+          const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 2;
+          nav.classList.toggle('nav-end', atEnd);
+        };
+        nav.addEventListener('scroll', updateFade, { passive: true });
+        updateFade();
+      }
     }
 
     // ================================================================
@@ -2103,20 +2192,23 @@
       const btn = document.getElementById('refresh-btn');
       btn.textContent = '\u21BB Loading\u2026';
       btn.disabled = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       loadSquad();
 
-      await Promise.allSettled([
-        loadNextMatch(),
-        loadStandings(),
-        loadFixtures(),
-        loadResults(),
-        loadScorersAndAssists(),
-        loadNews(),
-      ]);
-
-      btn.textContent = '\u21BB Refresh';
-      btn.disabled = false;
+      try {
+        await Promise.allSettled([
+          loadNextMatch(),
+          loadStandings(),
+          loadFixtures(),
+          loadResults(),
+          loadScorersAndAssists(),
+          loadNews(),
+        ]);
+      } finally {
+        btn.textContent = '\u21BB Refresh';
+        btn.disabled = false;
+      }
     }
 
     // Register section reloaders after functions are defined
