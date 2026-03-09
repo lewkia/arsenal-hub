@@ -1289,13 +1289,10 @@
     // CONFIGURATION
     // ================================================================
 
-    // API key — only needed for file:// fallback (CORS proxy).
-    // On Vercel, the serverless function at /api/football/* injects the key server-side.
-    // To use file:// mode locally, replace the empty string with your key (do NOT commit it).
     const IS_FILE    = window.location.protocol === 'file:';
-    const API_KEY    = IS_FILE ? '' : '';            // set only for local file:// use
+    const API_KEY    = 'f9632f4efd30435587e2e4c18c7c251d';
     const ARSENAL_ID = 57;
-    const HEADERS    = API_KEY ? { 'X-Auth-Token': API_KEY } : {};
+    const HEADERS    = { 'X-Auth-Token': API_KEY };
 
     // On Vercel, /api/football/* is handled by the serverless proxy function.
     // For file:// mode, fall back directly to the API with CORS proxy.
