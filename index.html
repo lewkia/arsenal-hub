@@ -196,6 +196,29 @@
       font-size: 0.9rem;
     }
 
+    .error-actions {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .retry-btn {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(248,113,113,0.6);
+      background: transparent;
+      color: #fecaca;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .retry-btn:hover {
+      background: rgba(248,113,113,0.15);
+    }
+
     /* ============================================================
        COMPETITION BADGE
     ============================================================ */
@@ -884,6 +907,9 @@
       overflow-x: auto;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
+      position: sticky;
+      top: var(--header-height, 72px);
+      z-index: 190;
     }
     .section-nav::-webkit-scrollbar { display: none; }
     .nav-list {
@@ -907,6 +933,12 @@
     }
     .nav-list a:hover  { color: var(--white); }
     .nav-list a.active { color: var(--red); border-bottom-color: var(--red); }
+
+    .section-subtitle {
+      font-size: 0.78rem;
+      color: var(--secondary);
+      margin-top: 0.2rem;
+    }
 
     /* ============================================================
        SECTION 9 — SQUAD
@@ -1041,7 +1073,7 @@
   ================================================================ -->
   <header class="site-header">
     <div class="header-inner">
-      <img src="https://crests.football-data.org/57.png" alt="Arsenal FC" class="header-icon">
+      <img src="https://crests.football-data.org/57.png" alt="Arsenal FC" class="header-icon" loading="lazy">
       <div class="header-brand">
         <h1 class="site-title">The Arsenal Hub By Polla</h1>
         <p class="site-subtitle">Come On You Gunners &#128308;&#9899;</p>
@@ -1075,7 +1107,7 @@
       <div class="section-header">
         <h2 class="section-title">Next Match</h2>
       </div>
-      <div id="next-match-container">
+      <div id="next-match-container" aria-live="polite">
         <div class="loading"><div class="spinner"></div></div>
       </div>
     </section>
@@ -1087,7 +1119,7 @@
       <div class="section-header">
         <h2 class="section-title">Premier League Table</h2>
       </div>
-      <div id="standings-container">
+      <div id="standings-container" aria-live="polite">
         <div class="loading"><div class="spinner"></div></div>
       </div>
     </section>
@@ -1098,8 +1130,9 @@
     <section class="section" id="s-fixtures">
       <div class="section-header">
         <h2 class="section-title">Upcoming Fixtures</h2>
+        <p class="section-subtitle">Kick-off times are shown in your local time zone.</p>
       </div>
-      <div id="fixtures-container">
+      <div id="fixtures-container" aria-live="polite">
         <div class="loading"><div class="spinner"></div></div>
       </div>
     </section>
@@ -1110,8 +1143,9 @@
     <section class="section" id="s-results">
       <div class="section-header">
         <h2 class="section-title">Recent Results</h2>
+        <p class="section-subtitle">Kick-off times are shown in your local time zone.</p>
       </div>
-      <div id="results-container">
+      <div id="results-container" aria-live="polite">
         <div class="loading"><div class="spinner"></div></div>
       </div>
     </section>
@@ -1124,7 +1158,7 @@
         <h2 class="section-title">Squad</h2>
       </div>
       <p class="squad-hint">&#8595; Tap any card to see age, contract &amp; value</p>
-      <div id="squad-container">
+      <div id="squad-container" aria-live="polite">
         <div class="loading"><div class="spinner"></div></div>
       </div>
     </section>
@@ -1136,7 +1170,7 @@
       <div class="section-header">
         <h2 class="section-title">Top Scorers</h2>
       </div>
-      <div class="two-col-grid" id="scorers-container">
+      <div class="two-col-grid" id="scorers-container" aria-live="polite">
         <div class="loading"><div class="spinner"></div></div>
       </div>
     </section>
@@ -1148,7 +1182,7 @@
       <div class="section-header">
         <h2 class="section-title">Top Assists</h2>
       </div>
-      <div class="two-col-grid" id="assists-container">
+      <div class="two-col-grid" id="assists-container" aria-live="polite">
         <div class="loading"><div class="spinner"></div></div>
       </div>
     </section>
@@ -1164,7 +1198,7 @@
           &#128240; NewsNow Arsenal
         </a>
       </div>
-      <div class="news-grid" id="news-container">
+      <div class="news-grid" id="news-container" aria-live="polite">
         <div class="loading"><div class="spinner"></div></div>
       </div>
     </section>
@@ -1289,7 +1323,16 @@
     const LOADING = `<div class="loading"><div class="spinner"></div></div>`;
 
     // Reusable error/info HTML
-    const errBox  = (msg) => `<div class="error-msg">&#9888;&#65039; ${msg}</div>`;
+    const SECTION_RELOADERS = {};
+
+    const errBox  = (msg, retryKey) => {
+      const canRetry = retryKey && SECTION_RELOADERS[retryKey];
+      const retryHtml = canRetry
+        ? `<div class="error-actions"><button class="retry-btn" data-retry="${retryKey}">Retry</button></div>`
+        : '';
+      return `<div class="error-msg">&#9888;&#65039; ${msg}${retryHtml}</div>`;
+    };
+
     const infoBox = (msg) => `<div class="info-msg">${msg}</div>`;
 
     // Pad a number to 2 digits
@@ -1360,7 +1403,7 @@
               <!-- Home team -->
               <div class="nm-team">
                 <img src="${match.homeTeam.crest}" alt="${match.homeTeam.name}"
-                     class="nm-crest"
+                     class="nm-crest" loading="lazy"
                      onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'&#127942;',style:'font-size:2.5rem'}))">
                 <span class="nm-team-name ${homeArs ? 'arsenal-name' : ''}">
                   ${match.homeTeam.shortName || match.homeTeam.name}
@@ -1381,7 +1424,7 @@
               <!-- Away team -->
               <div class="nm-team">
                 <img src="${match.awayTeam.crest}" alt="${match.awayTeam.name}"
-                     class="nm-crest"
+                     class="nm-crest" loading="lazy"
                      onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'&#127942;',style:'font-size:2.5rem'}))">
                 <span class="nm-team-name ${awayArs ? 'arsenal-name' : ''}">
                   ${match.awayTeam.shortName || match.awayTeam.name}
@@ -1422,7 +1465,7 @@
         startCountdown(match.utcDate);
 
       } catch (e) {
-        el.innerHTML = errBox('Could not load next match. ' + e.message);
+        el.innerHTML = errBox('Could not load next match. ' + e.message, 'next-match');
       }
     }
 
@@ -1526,7 +1569,7 @@
         `;
 
       } catch (e) {
-        el.innerHTML = errBox('Could not load standings. ' + e.message);
+        el.innerHTML = errBox('Could not load standings. ' + e.message, 'standings');
       }
     }
 
@@ -1560,8 +1603,8 @@
               </div>
               <div class="card-teams">
                 <div class="card-team">
-                  <img src="${m.homeTeam.crest}" alt="${m.homeTeam.name}"
-                       class="card-crest" onerror="this.style.display='none'">
+                <img src="${m.homeTeam.crest}" alt="${m.homeTeam.name}"
+                       class="card-crest" loading="lazy" onerror="this.style.display='none'">
                   <span class="${homeArs ? 'arsenal-name' : ''}">
                     ${m.homeTeam.shortName || m.homeTeam.name}
                   </span>
@@ -1569,7 +1612,7 @@
                 <span class="card-vs">VS</span>
                 <div class="card-team right">
                   <img src="${m.awayTeam.crest}" alt="${m.awayTeam.name}"
-                       class="card-crest" onerror="this.style.display='none'">
+                       class="card-crest" loading="lazy" onerror="this.style.display='none'">
                   <span class="${awayArs ? 'arsenal-name' : ''}">
                     ${m.awayTeam.shortName || m.awayTeam.name}
                   </span>
@@ -1583,7 +1626,7 @@
         el.innerHTML = `<div class="fixtures-grid">${cards}</div>`;
 
       } catch (e) {
-        el.innerHTML = errBox('Could not load fixtures. ' + e.message);
+        el.innerHTML = errBox('Could not load fixtures. ' + e.message, 'fixtures');
       }
     }
 
@@ -1623,7 +1666,7 @@
               <div class="card-teams">
                 <div class="card-team">
                   <img src="${m.homeTeam.crest}" alt="${m.homeTeam.name}"
-                       class="card-crest" onerror="this.style.display='none'">
+                       class="card-crest" loading="lazy" onerror="this.style.display='none'">
                   <span class="${homeArs ? 'arsenal-name' : ''}">
                     ${m.homeTeam.shortName || m.homeTeam.name}
                   </span>
@@ -1633,7 +1676,7 @@
                 </div>
                 <div class="card-team right">
                   <img src="${m.awayTeam.crest}" alt="${m.awayTeam.name}"
-                       class="card-crest" onerror="this.style.display='none'">
+                       class="card-crest" loading="lazy" onerror="this.style.display='none'">
                   <span class="${awayArs ? 'arsenal-name' : ''}">
                     ${m.awayTeam.shortName || m.awayTeam.name}
                   </span>
@@ -1646,7 +1689,7 @@
         el.innerHTML = `<div class="results-grid">${cards}</div>`;
 
       } catch (e) {
-        el.innerHTML = errBox('Could not load results. ' + e.message);
+        el.innerHTML = errBox('Could not load results. ' + e.message, 'results');
       }
     }
 
@@ -1694,8 +1737,8 @@
             true);
 
       } catch (e) {
-        scEl.innerHTML = errBox('Could not load scorers. ' + e.message);
-        asEl.innerHTML = errBox('Could not load assists. ' + e.message);
+        scEl.innerHTML = errBox('Could not load scorers. ' + e.message, 'scorers');
+        asEl.innerHTML = errBox('Could not load assists. ' + e.message, 'assists');
       }
     }
 
@@ -1723,7 +1766,7 @@
 
       const hasExtra = list.length > 5;
       const toggle = hasExtra ? `
-        <button class="scorers-toggle" onclick="this.closest('.scorers-card').classList.toggle('expanded');this.querySelector('.scorers-toggle-label').textContent=this.closest('.scorers-card').classList.contains('expanded')?'Show less':'Show top 10';">
+        <button class="scorers-toggle" type="button">
           <span class="scorers-toggle-label">Show top 10</span>
           <span class="scorers-toggle-arrow">&#8964;</span>
         </button>` : '';
@@ -1788,7 +1831,7 @@
         }).join('');
 
       } catch (e) {
-        el.innerHTML = errBox('Could not load news. ' + e.message);
+        el.innerHTML = errBox('Could not load news. ' + e.message, 'news');
       }
     }
 
@@ -1827,12 +1870,6 @@
         return sub[code] || '🇬🇧';
       }
       return code.split('').map(c => String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)).join('');
-    }
-
-    function calcAge(dob) {
-      if (!dob) return '—';
-      const diff = Date.now() - new Date(dob).getTime();
-      return Math.floor(diff / (365.25 * 24 * 3600 * 1000));
     }
 
     function loadSquad() {
@@ -1895,7 +1932,7 @@
 
       const html = Object.entries(SQUAD).map(([pos, players]) => {
         const cards = players.map(p => `
-          <div class="player-card" onclick="this.classList.toggle('expanded')">
+          <div class="player-card" role="button" tabindex="0" aria-expanded="false">
             <div class="player-card-top">
               <div class="player-number">${p.num}</div>
               <div style="display:flex;align-items:flex-start;gap:0.3rem">
@@ -1947,11 +1984,72 @@
     })();
 
     // ================================================================
+    // GLOBAL INTERACTIONS — Delegated handlers
+    // ================================================================
+
+    // Retry buttons for section reloads
+    document.addEventListener('click', (event) => {
+      const retryBtn = event.target.closest('.retry-btn');
+      if (retryBtn) {
+        const key = retryBtn.dataset.retry;
+        const fn = SECTION_RELOADERS[key];
+        if (typeof fn === 'function') {
+          fn();
+        }
+      }
+    });
+
+    // Expand/collapse squad player cards (click)
+    document.addEventListener('click', (event) => {
+      const card = event.target.closest('.player-card');
+      if (!card) return;
+      const isExpanded = card.classList.toggle('expanded');
+      card.setAttribute('aria-expanded', String(isExpanded));
+    });
+
+    // Expand/collapse squad player cards (keyboard)
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const card = event.target.closest('.player-card');
+      if (!card) return;
+      event.preventDefault();
+      const isExpanded = card.classList.toggle('expanded');
+      card.setAttribute('aria-expanded', String(isExpanded));
+    });
+
+    // Toggle "Show top 10" scorers/assists
+    document.addEventListener('click', (event) => {
+      const toggleBtn = event.target.closest('.scorers-toggle');
+      if (!toggleBtn) return;
+      const card = toggleBtn.closest('.scorers-card');
+      if (!card) return;
+      const expanded = card.classList.toggle('expanded');
+      const labelEl = toggleBtn.querySelector('.scorers-toggle-label');
+      if (labelEl) {
+        labelEl.textContent = expanded ? 'Show less' : 'Show top 10';
+      }
+    });
+
+    // ================================================================
     // NAVIGATION — Highlight active section on scroll
     // ================================================================
     function initNav() {
       const links    = document.querySelectorAll('.nav-list a');
       const sections = Array.from(links).map(a => document.getElementById(a.dataset.section)).filter(Boolean);
+      const header   = document.querySelector('.site-header');
+      const nav      = document.getElementById('section-nav');
+
+      // Keep --header-height CSS var in sync so sticky nav top is correct
+      function updateHeaderHeight() {
+        const h = header ? header.offsetHeight : 0;
+        document.documentElement.style.setProperty('--header-height', h + 'px');
+      }
+      updateHeaderHeight();
+      new ResizeObserver(updateHeaderHeight).observe(header || document.body);
+
+      function stickyOffset() {
+        return (header ? header.offsetHeight : 0) + (nav ? nav.offsetHeight : 0);
+      }
 
       // Smooth scroll override (allows sticky header offset)
       links.forEach(a => {
@@ -1959,8 +2057,7 @@
           e.preventDefault();
           const target = document.getElementById(a.dataset.section);
           if (target) {
-            const offset = 120; // header + nav height
-            const top = target.getBoundingClientRect().top + window.scrollY - offset;
+            const top = target.getBoundingClientRect().top + window.scrollY - stickyOffset() - 8;
             window.scrollTo({ top, behavior: 'smooth' });
           }
         });
@@ -1971,9 +2068,12 @@
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             links.forEach(a => a.classList.toggle('active', a.dataset.section === entry.target.id));
+            // Scroll active nav link into view
+            const activeLink = document.querySelector(`.nav-list a[data-section="${entry.target.id}"]`);
+            if (activeLink && nav) activeLink.scrollIntoView({ inline: 'nearest', block: 'nearest' });
           }
         });
-      }, { rootMargin: '-30% 0px -60% 0px' });
+      }, { rootMargin: '-20% 0px -70% 0px' });
 
       sections.forEach(s => obs.observe(s));
     }
@@ -2001,6 +2101,15 @@
       btn.textContent = '\u21BB Refresh';
       btn.disabled = false;
     }
+
+    // Register section reloaders after functions are defined
+    SECTION_RELOADERS['next-match'] = loadNextMatch;
+    SECTION_RELOADERS['standings']  = loadStandings;
+    SECTION_RELOADERS['fixtures']   = loadFixtures;
+    SECTION_RELOADERS['results']    = loadResults;
+    SECTION_RELOADERS['scorers']    = loadScorersAndAssists;
+    SECTION_RELOADERS['assists']    = loadScorersAndAssists;
+    SECTION_RELOADERS['news']       = loadNews;
 
     // WhatsApp share link (fills in the current page URL)
     document.getElementById('whatsapp-share').href =

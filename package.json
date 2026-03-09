@@ -1,8 +1,5 @@
 {
   "scripts": {
     "build": "echo 'No build step'"
-  },
-  "dependencies": {
-    "@vercel/analytics": "^1.6.1"
   }
 }
