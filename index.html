@@ -34,6 +34,14 @@
       --loss:        #ef4444;
       --radius:      12px;
       --shadow:      0 4px 24px rgba(0,0,0,0.4);
+
+      /* ── Type Scale ── */
+      --text-xs:   0.65rem;   /* tiny labels: badges, loan notes, cd-text */
+      --text-sm:   0.72rem;   /* secondary info: dates, venues, legends, ranks */
+      --text-md:   0.82rem;   /* body text: names, titles, nav items */
+      --text-lg:   0.9rem;    /* slightly prominent: buttons, card teams */
+      --text-xl:   1.15rem;   /* section headings, scores */
+      --text-2xl:  1.6rem;    /* hero elements: VS, cd-sep */
     }
 
     html { scroll-behavior: smooth; }
@@ -86,7 +94,7 @@
     }
 
     .site-subtitle {
-      font-size: 0.82rem;
+      font-size: var(--text-md);
       color: var(--secondary);
       margin-top: 0.2rem;
       letter-spacing: 0.02em;
@@ -100,7 +108,7 @@
       border: none;
       padding: 0.45rem 1rem;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: var(--text-lg);
       font-weight: 700;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
@@ -134,7 +142,7 @@
     }
 
     .section-title {
-      font-size: 1.15rem;
+      font-size: var(--text-xl);
       font-weight: 800;
       color: var(--white);
       display: flex;
@@ -153,25 +161,30 @@
     }
 
     /* ============================================================
-       LOADING SPINNER
+       SKELETON LOADER
     ============================================================ */
     .loading {
+      padding: 1rem 0;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 3rem 1rem;
+      flex-direction: column;
+      gap: 0.75rem;
     }
 
-    .spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid rgba(239,1,7,0.2);
-      border-top-color: var(--red);
-      border-radius: 50%;
-      animation: spin 0.75s linear infinite;
+    .skel-line {
+      width: 100%;
+      height: 1rem;
+      border-radius: 6px;
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.05) 25%,
+        rgba(255,255,255,0.1)  50%,
+        rgba(255,255,255,0.05) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease infinite;
     }
+    .skel-sm  { width: 55%; }
+    .skel-med { width: 75%; }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes shimmer { to { background-position: -200% 0; } }
 
     /* ============================================================
        MESSAGES
@@ -183,7 +196,7 @@
       padding: 1rem 1.25rem;
       border-radius: var(--radius);
       text-align: center;
-      font-size: 0.9rem;
+      font-size: var(--text-lg);
     }
 
     .info-msg {
@@ -193,7 +206,7 @@
       padding: 1rem 1.25rem;
       border-radius: var(--radius);
       text-align: center;
-      font-size: 0.9rem;
+      font-size: var(--text-lg);
     }
 
     .error-actions {
@@ -208,13 +221,12 @@
       border: 1px solid rgba(248,113,113,0.6);
       background: transparent;
       color: #fecaca;
-      font-size: 0.8rem;
+      font-size: var(--text-md);
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
-
     .retry-btn:hover {
       background: rgba(248,113,113,0.15);
     }
@@ -226,7 +238,7 @@
       display: inline-block;
       padding: 0.18rem 0.55rem;
       border-radius: 4px;
-      font-size: 0.68rem;
+      font-size: var(--text-xs);
       font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -235,25 +247,16 @@
     }
 
     /* ============================================================
-       SECTION 1 — NEXT MATCH HERO
+       SECTION 1 — NEXT MATCH
     ============================================================ */
     .next-match-card {
       background: linear-gradient(135deg, var(--bg-card) 0%, #1a2a50 100%);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 1.75rem 1.25rem 1.5rem;
+      padding: 1.5rem 1rem;
       box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
-    }
-
-    /* Red top stripe */
-    .next-match-card::before {
-      content: '';
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 3px;
-      background: var(--red);
     }
 
     /* Teams row */
@@ -281,7 +284,7 @@
     }
 
     .nm-team-name {
-      font-size: 0.82rem;
+      font-size: var(--text-md);
       font-weight: 700;
       color: var(--white);
       line-height: 1.2;
@@ -297,7 +300,7 @@
     }
 
     .nm-vs {
-      font-size: 1.6rem;
+      font-size: var(--text-2xl);
       font-weight: 900;
       color: var(--red);
     }
@@ -309,9 +312,9 @@
       gap: 0.25rem;
     }
 
-    .nm-date { font-size: 0.78rem; color: var(--secondary); }
+    .nm-date { font-size: var(--text-sm); color: var(--secondary); }
     .nm-time { font-size: 1rem; font-weight: 800; color: var(--red); }
-    .nm-venue { font-size: 0.72rem; color: var(--secondary); }
+    .nm-venue { font-size: var(--text-sm); color: var(--secondary); }
 
     /* Countdown */
     .countdown-section {
@@ -321,7 +324,7 @@
     }
 
     .cd-label {
-      font-size: 0.72rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -351,7 +354,7 @@
     }
 
     .cd-text {
-      font-size: 0.6rem;
+      font-size: var(--text-xs);
       color: var(--secondary);
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -367,17 +370,30 @@
     }
 
     .live-badge {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
       background: var(--red);
       color: #fff;
       padding: 0.4rem 1.25rem;
       border-radius: 999px;
       font-weight: 800;
-      font-size: 0.95rem;
-      animation: blink 1.2s ease infinite;
+      font-size: var(--text-lg);
+    }
+    .live-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #fff;
+      animation: live-pulse 1.5s ease infinite;
+      flex-shrink: 0;
     }
 
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.55} }
+    @keyframes live-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
 
     /* ============================================================
        SECTION 2 — EPL STANDINGS
@@ -390,7 +406,7 @@
       border-radius: 8px;
       margin-bottom: 0.85rem;
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: var(--text-lg);
     }
 
     .top4-gap.in-top4 {
@@ -421,7 +437,7 @@
     .standings-table thead th {
       background: rgba(239,1,7,0.12);
       color: var(--secondary);
-      font-size: 0.68rem;
+      font-size: var(--text-sm);
       text-transform: uppercase;
       letter-spacing: 0.1em;
       padding: 0.65rem 0.4rem;
@@ -436,19 +452,20 @@
       padding: 0.5rem 0.4rem;
       text-align: center;
       border-bottom: 1px solid var(--border);
-      font-size: 0.83rem;
+      font-size: var(--text-md);
       vertical-align: middle;
     }
 
     .standings-table tbody td.left { text-align: left; padding-left: 0.75rem; }
 
     .standings-table tbody tr:last-child td { border-bottom: none; }
-    .standings-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+    .standings-table tbody tr:hover { background: rgba(255,255,255,0.06); }
 
     /* Arsenal row highlight */
     .arsenal-row {
-      background: rgba(239,1,7,0.09) !important;
+      background: rgba(239,1,7,0.14) !important;
       border-left: 3px solid var(--red);
+      box-shadow: inset 0 0 0 1px rgba(239,1,7,0.2);
     }
     .arsenal-row td { font-weight: 800 !important; }
 
@@ -485,7 +502,7 @@
       width: 19px;
       height: 19px;
       border-radius: 4px;
-      font-size: 0.62rem;
+      font-size: var(--text-xs);
       font-weight: 800;
       margin: 0 1px;
     }
@@ -503,7 +520,7 @@
       margin-top: 0.6rem;
     }
     .zone-legend span {
-      font-size: 0.72rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
       display: flex;
       align-items: center;
@@ -528,7 +545,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 0.9rem 1.1rem;
+      padding: 1rem;
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     }
     .fixture-card:hover {
@@ -546,7 +563,7 @@
     }
 
     .card-date {
-      font-size: 0.78rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
       flex: 1;
     }
@@ -562,7 +579,7 @@
       display: flex;
       align-items: center;
       gap: 0.45rem;
-      font-size: 0.9rem;
+      font-size: var(--text-lg);
       font-weight: 700;
     }
 
@@ -579,7 +596,7 @@
     }
 
     .card-vs {
-      font-size: 0.75rem;
+      font-size: var(--text-sm);
       font-weight: 800;
       color: var(--secondary);
       padding: 0 0.25rem;
@@ -587,7 +604,7 @@
     }
 
     .card-venue {
-      font-size: 0.72rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
       margin-top: 0.45rem;
     }
@@ -602,9 +619,9 @@
     .result-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-left: 4px solid transparent;
+      border-left: 3px solid transparent;
       border-radius: var(--radius);
-      padding: 0.9rem 1.1rem;
+      padding: 1rem;
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .result-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
@@ -616,7 +633,7 @@
     .result-badge {
       padding: 0.18rem 0.55rem;
       border-radius: 4px;
-      font-size: 0.72rem;
+      font-size: var(--text-sm);
       font-weight: 800;
     }
     .result-badge.win  { background: var(--win);  color: #fff; }
@@ -624,7 +641,7 @@
     .result-badge.loss { background: var(--loss); color: #fff; }
 
     .result-score {
-      font-size: 1.15rem;
+      font-size: var(--text-xl);
       font-weight: 900;
       color: var(--white);
       padding: 0 0.6rem;
@@ -655,7 +672,7 @@
     .scorers-card-title {
       background: rgba(239,1,7,0.12);
       padding: 0.65rem 1rem;
-      font-size: 0.8rem;
+      font-size: var(--text-md);
       font-weight: 800;
       color: var(--white);
       text-transform: uppercase;
@@ -682,7 +699,7 @@
     .scorer-row.is-arsenal:hover { background: rgba(239,1,7,0.13); }
 
     .scorer-rank {
-      font-size: 0.72rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
       font-weight: 700;
       min-width: 1.4rem;
@@ -698,7 +715,7 @@
     }
 
     .scorer-name {
-      font-size: 0.87rem;
+      font-size: var(--text-lg);
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
@@ -706,12 +723,12 @@
     }
 
     .scorer-sub {
-      font-size: 0.7rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
     }
 
     .scorer-stat {
-      font-size: 0.88rem;
+      font-size: var(--text-lg);
       font-weight: 800;
       white-space: nowrap;
       color: var(--white);
@@ -730,7 +747,7 @@
       border: none;
       border-top: 1px solid var(--border);
       color: var(--secondary);
-      font-size: 0.72rem;
+      font-size: var(--text-sm);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -745,7 +762,7 @@
       text-align: center;
       color: var(--secondary);
       padding: 1.5rem;
-      font-size: 0.85rem;
+      font-size: var(--text-lg);
     }
 
     /* ============================================================
@@ -760,7 +777,7 @@
       color: var(--white);
       padding: 0.38rem 0.85rem;
       border-radius: 8px;
-      font-size: 0.78rem;
+      font-size: var(--text-sm);
       font-weight: 700;
       transition: background 0.2s;
       white-space: nowrap;
@@ -803,7 +820,7 @@
 
     .news-body {
       flex: 1;
-      padding: 0.65rem 0.75rem;
+      padding: 0.75rem;
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
@@ -811,14 +828,14 @@
     }
 
     .news-source {
-      font-size: 0.68rem;
+      font-size: var(--text-sm);
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     .news-title {
-      font-size: 0.83rem;
+      font-size: var(--text-md);
       font-weight: 600;
       color: var(--white);
       line-height: 1.35;
@@ -829,7 +846,7 @@
     }
 
     .news-date {
-      font-size: 0.68rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
       margin-top: auto;
     }
@@ -853,21 +870,21 @@
       gap: 1rem;
     }
 
-    .footer-text { color: var(--secondary); font-size: 0.85rem; }
+    .footer-text { color: var(--secondary); font-size: var(--text-lg); }
 
     .whatsapp-btn {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      background: #25d366;
+      background: var(--red);
       color: #fff;
       padding: 0.6rem 1.5rem;
       border-radius: 999px;
       font-weight: 800;
-      font-size: 0.9rem;
+      font-size: var(--text-lg);
       transition: background 0.2s, transform 0.1s;
     }
-    .whatsapp-btn:hover  { background: #1ebe5a; }
+    .whatsapp-btn:hover  { background: var(--red-dark); }
     .whatsapp-btn:active { transform: scale(0.97); }
 
     /* ============================================================
@@ -922,7 +939,7 @@
     .nav-list a {
       display: block;
       padding: 0.6rem 0.85rem;
-      font-size: 0.75rem;
+      font-size: var(--text-sm);
       font-weight: 700;
       color: var(--secondary);
       text-transform: uppercase;
@@ -935,7 +952,7 @@
     .nav-list a.active { color: var(--red); border-bottom-color: var(--red); }
 
     .section-subtitle {
-      font-size: 0.78rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
       margin-top: 0.2rem;
     }
@@ -945,7 +962,7 @@
     ============================================================ */
     .position-group { margin-bottom: 1.5rem; }
     .position-label {
-      font-size: 0.72rem;
+      font-size: var(--text-sm);
       font-weight: 800;
       color: var(--red);
       text-transform: uppercase;
@@ -979,7 +996,7 @@
     .player-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(239,1,7,0.3); }
     .player-card.expanded { border-color: var(--red); background: rgba(239,1,7,0.07); }
     .player-chevron {
-      font-size: 0.7rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
       transition: transform 0.2s ease;
       line-height: 1;
@@ -988,16 +1005,16 @@
       margin-top: 0.2rem;
     }
     .player-card.expanded .player-chevron { transform: rotate(180deg); color: var(--red); }
-    .squad-hint { font-size: 0.72rem; color: var(--secondary); margin-bottom: 1rem; font-style: italic; }
+    .squad-hint { font-size: var(--text-sm); color: var(--secondary); margin-bottom: 1rem; font-style: italic; }
     .player-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem; }
     .player-number { font-size: 1.4rem; font-weight: 900; color: var(--red); opacity: 0.65; line-height: 1; flex-shrink: 0; }
     .player-flag   { font-size: 1.1rem; line-height: 1; margin-top: 0.1rem; flex-shrink: 0; }
-    .player-name   { font-size: 0.83rem; font-weight: 700; margin-top: 0.25rem; line-height: 1.25; }
-    .player-nat    { font-size: 0.68rem; color: var(--secondary); margin-top: 0.1rem; }
+    .player-name   { font-size: var(--text-md); font-weight: 700; margin-top: 0.25rem; line-height: 1.25; }
+    .player-nat    { font-size: var(--text-sm); color: var(--secondary); margin-top: 0.1rem; }
     .player-status-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
     .p-badge {
       display: inline-block;
-      font-size: 0.6rem;
+      font-size: var(--text-xs);
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -1013,7 +1030,7 @@
       margin-top: 0.65rem;
       padding-top: 0.55rem;
       border-top: 1px solid var(--border);
-      font-size: 0.72rem;
+      font-size: var(--text-sm);
       color: var(--secondary);
     }
     .player-card.expanded .player-detail { display: block; }
@@ -1025,11 +1042,11 @@
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .detail-row:last-child { border-bottom: none; }
-    .detail-icon { font-size: 0.78rem; flex-shrink: 0; width: 1.1rem; text-align: center; }
+    .detail-icon { font-size: var(--text-sm); flex-shrink: 0; width: 1.1rem; text-align: center; }
     .detail-label { color: var(--secondary); min-width: 4.5rem; flex-shrink: 0; }
     .detail-val { color: var(--white); font-weight: 600; }
     .detail-val.green { color: #86efac; }
-    .detail-loan-note { font-size: 0.65rem; color: #93c5fd; margin-top: 0.3rem; font-style: italic; }
+    .detail-loan-note { font-size: var(--text-xs); color: #93c5fd; margin-top: 0.3rem; font-style: italic; }
 
 
     /* ============================================================
@@ -1108,7 +1125,7 @@
         <h2 class="section-title">Next Match</h2>
       </div>
       <div id="next-match-container" aria-live="polite">
-        <div class="loading"><div class="spinner"></div></div>
+        <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
     </section>
 
@@ -1120,7 +1137,7 @@
         <h2 class="section-title">Premier League Table</h2>
       </div>
       <div id="standings-container" aria-live="polite">
-        <div class="loading"><div class="spinner"></div></div>
+        <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
     </section>
 
@@ -1133,7 +1150,7 @@
         <p class="section-subtitle">Kick-off times are shown in your local time zone.</p>
       </div>
       <div id="fixtures-container" aria-live="polite">
-        <div class="loading"><div class="spinner"></div></div>
+        <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
     </section>
 
@@ -1146,7 +1163,7 @@
         <p class="section-subtitle">Kick-off times are shown in your local time zone.</p>
       </div>
       <div id="results-container" aria-live="polite">
-        <div class="loading"><div class="spinner"></div></div>
+        <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
     </section>
 
@@ -1159,7 +1176,7 @@
       </div>
       <p class="squad-hint">&#8595; Tap any card to see age, contract &amp; value</p>
       <div id="squad-container" aria-live="polite">
-        <div class="loading"><div class="spinner"></div></div>
+        <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
     </section>
 
@@ -1171,7 +1188,7 @@
         <h2 class="section-title">Top Scorers</h2>
       </div>
       <div class="two-col-grid" id="scorers-container" aria-live="polite">
-        <div class="loading"><div class="spinner"></div></div>
+        <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
     </section>
 
@@ -1183,7 +1200,7 @@
         <h2 class="section-title">Top Assists</h2>
       </div>
       <div class="two-col-grid" id="assists-container" aria-live="polite">
-        <div class="loading"><div class="spinner"></div></div>
+        <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
     </section>
 
@@ -1199,7 +1216,7 @@
         </a>
       </div>
       <div class="news-grid" id="news-container" aria-live="polite">
-        <div class="loading"><div class="spinner"></div></div>
+        <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
     </section>
 
@@ -1289,10 +1306,10 @@
 
     // RSS news feeds — fetched via rssFetch() which uses the CORS proxy
     const RSS_FEEDS = [
-      { name: 'Football.London', url: 'https://www.football.london/arsenal/rss.xml', color: '#4da6ff' },
+      { name: 'Football.London', url: 'https://www.football.london/arsenal/rss.xml', color: '#60a5fa' },
       { name: 'Arseblog',        url: 'https://arseblog.com/feed',                  color: '#EF0107' },
-      { name: 'Just Arsenal',    url: 'https://justarsenal.com/feed',               color: '#f59e0b' },
-      { name: 'Daily Cannon',    url: 'https://dailycannon.com/feed',               color: '#22c55e' },
+      { name: 'Just Arsenal',    url: 'https://justarsenal.com/feed',               color: '#fb923c' },
+      { name: 'Daily Cannon',    url: 'https://dailycannon.com/feed',               color: '#86efac' },
     ];
 
     // ================================================================
@@ -1320,7 +1337,7 @@
     }
 
     // Reusable loading HTML
-    const LOADING = `<div class="loading"><div class="spinner"></div></div>`;
+    const LOADING = `<div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>`;
 
     // Reusable error/info HTML
     const SECTION_RELOADERS = {};
