@@ -637,55 +637,6 @@
       flex-shrink: 0;
     }
 
-    .result-card { cursor: pointer; }
-
-    .expand-toggle {
-      text-align: center;
-      font-size: var(--text-sm);
-      color: var(--secondary);
-      padding-top: 0.6rem;
-      margin-top: 0.25rem;
-      user-select: none;
-    }
-    .expand-toggle::after { content: ' ▾'; }
-    .result-card.expanded .expand-toggle::after { content: ' ▴'; }
-
-    .match-detail {
-      display: none;
-      padding-top: 0.75rem;
-      margin-top: 0.75rem;
-      border-top: 1px solid var(--border);
-    }
-    .result-card.expanded .match-detail { display: block; }
-
-    .match-section-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--secondary);
-      margin: 0.55rem 0 0.25rem;
-    }
-    .match-section-label:first-child { margin-top: 0; }
-
-    .match-events { display: flex; flex-direction: column; gap: 0.25rem; }
-
-    .match-event {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: var(--text-sm);
-    }
-    .match-event .ev-min {
-      color: var(--secondary);
-      font-size: 0.7rem;
-      min-width: 2.2rem;
-      text-align: right;
-      flex-shrink: 0;
-    }
-    .match-event.ars  { color: var(--white); }
-    .match-event.opp  { color: var(--secondary); }
-    .match-detail-msg { color: var(--secondary); font-size: var(--text-sm); text-align: center; }
 
     /* ============================================================
        SECTIONS 5 & 6 — SCORERS / ASSISTS (2-col grid)
@@ -1758,66 +1709,7 @@
     // ================================================================
     // SECTION 4 — RECENT RESULTS
     // Fetch: /teams/57/matches?status=FINISHED&limit=5
-    // Detail: /matches/{id}  (lazy, on card expand)
     // ================================================================
-
-    const matchDetailCache = {};
-
-    function renderMatchDetail(match) {
-      const goals    = match.goals         || [];
-      const bookings = match.bookings      || [];
-      const subs     = match.substitutions || [];
-
-      if (!goals.length && !bookings.length && !subs.length) {
-        return '<p class="match-detail-msg">No event data available.</p>';
-      }
-
-      const fmtMin = ev => ev.minute + (ev.injuryTime ? `+${ev.injuryTime}` : '') + `'`;
-      let html = '';
-
-      if (goals.length) {
-        html += '<div class="match-section-label">⚽ Goals</div><div class="match-events">';
-        goals.forEach(g => {
-          const side  = g.team?.id === ARSENAL_ID ? 'ars' : 'opp';
-          const extra = g.type === 'OWN_GOAL' ? ' (OG)' : g.type === 'PENALTY' ? ' (pen)' : '';
-          html += `<div class="match-event ${side}">
-            <span class="ev-min">${fmtMin(g)}</span>
-            <span>⚽</span>
-            <span>${g.scorer?.name ?? 'Unknown'}${extra}</span>
-          </div>`;
-        });
-        html += '</div>';
-      }
-
-      if (bookings.length) {
-        html += '<div class="match-section-label">Cards</div><div class="match-events">';
-        bookings.forEach(b => {
-          const side = b.team?.id === ARSENAL_ID ? 'ars' : 'opp';
-          const icon = b.card === 'YELLOW_CARD' ? '🟨' : '🟥';
-          html += `<div class="match-event ${side}">
-            <span class="ev-min">${fmtMin(b)}</span>
-            <span>${icon}</span>
-            <span>${b.player?.name ?? 'Unknown'}</span>
-          </div>`;
-        });
-        html += '</div>';
-      }
-
-      const arsenalSubs = subs.filter(s => s.team?.id === ARSENAL_ID);
-      if (arsenalSubs.length) {
-        html += '<div class="match-section-label">🔄 Arsenal Subs</div><div class="match-events">';
-        arsenalSubs.forEach(s => {
-          html += `<div class="match-event ars">
-            <span class="ev-min">${fmtMin(s)}</span>
-            <span>🔄</span>
-            <span>${s.playerIn?.name ?? '?'} ↑ &nbsp;${s.playerOut?.name ?? '?'} ↓</span>
-          </div>`;
-        });
-        html += '</div>';
-      }
-
-      return html;
-    }
 
     async function loadResults() {
       const el = document.getElementById('results-container');
@@ -1842,7 +1734,7 @@
           const awayArs = m.awayTeam.id === ARSENAL_ID;
 
           return `
-            <div class="result-card ${cls}" data-match-id="${m.id}">
+            <div class="result-card ${cls}">
               <div class="card-header">
                 ${compBadge(m.competition.name)}
                 <span class="card-date">${fmtDate(m.utcDate)}</span>
@@ -1867,38 +1759,11 @@
                   </span>
                 </div>
               </div>
-              <div class="match-detail"></div>
-              <div class="expand-toggle">Match details</div>
             </div>
           `;
         }).join('');
 
         el.innerHTML = `<div class="results-grid">${cards}</div>`;
-
-        el.querySelectorAll('.result-card').forEach(card => {
-          card.addEventListener('click', async () => {
-            const id      = card.dataset.matchId;
-            const detail  = card.querySelector('.match-detail');
-            const isOpen  = card.classList.contains('expanded');
-
-            card.classList.toggle('expanded', !isOpen);
-            if (isOpen) return;
-
-            if (matchDetailCache[id]) {
-              detail.innerHTML = matchDetailCache[id];
-              return;
-            }
-
-            detail.innerHTML = '<p class="match-detail-msg">Loading…</p>';
-            try {
-              const data = await apiFetch(`/matches/${id}`);
-              matchDetailCache[id] = renderMatchDetail(data);
-              detail.innerHTML = matchDetailCache[id];
-            } catch (e) {
-              detail.innerHTML = '<p class="match-detail-msg">Could not load match details.</p>';
-            }
-          });
-        });
 
       } catch (e) {
         el.innerHTML = errBox('Could not load results. ' + e.message, 'results');
