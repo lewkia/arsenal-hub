@@ -119,6 +119,60 @@
     .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* ============================================================
+       NEWS TICKER
+    ============================================================ */
+    .ticker-wrap {
+      background: var(--red);
+      display: flex;
+      align-items: stretch;
+      height: 2rem;
+      overflow: hidden;
+    }
+    .ticker-label {
+      background: rgba(0,0,0,0.35);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0 0.85rem;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      white-space: nowrap;
+      border-right: 1px solid rgba(255,255,255,0.15);
+    }
+    .ticker-outer {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .ticker-inner {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      animation: ticker-scroll 80s linear infinite;
+    }
+    .ticker-inner:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      color: #fff;
+      font-size: 0.78rem;
+      padding: 0 1.2rem;
+    }
+    .ticker-item.ticker-result { font-weight: 600; }
+    .ticker-item.ticker-next   { font-weight: 700; letter-spacing: 0.01em; }
+    .ticker-sep {
+      color: rgba(255,255,255,0.35);
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
        MAIN LAYOUT
     ============================================================ */
     main {
@@ -1150,6 +1204,16 @@
     </ul>
   </nav>
 
+  <!-- News ticker -->
+  <div class="ticker-wrap">
+    <div class="ticker-label">Latest</div>
+    <div class="ticker-outer">
+      <div class="ticker-inner" id="ticker-inner">
+        <span class="ticker-item" style="color:rgba(255,255,255,0.5)">Loading…</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ================================================================
        MAIN CONTENT
   ================================================================ -->
@@ -1436,6 +1500,71 @@
 
       tick();
       cdInterval = setInterval(tick, 1000);
+    }
+
+    // ================================================================
+    // TICKER
+    // ================================================================
+    async function loadTicker() {
+      const el = document.getElementById('ticker-inner');
+      const sep = () => '<span class="ticker-sep">&nbsp;&nbsp;·&nbsp;&nbsp;</span>';
+
+      try {
+        const [resultsRes, fixtureRes, newsRes] = await Promise.allSettled([
+          apiFetch(`/teams/${ARSENAL_ID}/matches?status=FINISHED&limit=3`),
+          apiFetch(`/teams/${ARSENAL_ID}/matches?status=SCHEDULED&limit=1`),
+          rssFetch('https://arseblog.com/feed'),
+        ]);
+
+        const items = [];
+
+        // Last 3 results
+        if (resultsRes.status === 'fulfilled') {
+          const matches = [...(resultsRes.value.matches || [])].reverse();
+          matches.forEach(m => {
+            const isHome = m.homeTeam.id === ARSENAL_ID;
+            const aG     = isHome ? m.score.fullTime.home : m.score.fullTime.away;
+            const oG     = isHome ? m.score.fullTime.away : m.score.fullTime.home;
+            const opp    = (isHome ? m.awayTeam : m.homeTeam).shortName || (isHome ? m.awayTeam : m.homeTeam).name;
+            const icon   = aG > oG ? '✅' : aG === oG ? '🟡' : '❌';
+            items.push(`<span class="ticker-item ticker-result">${icon} Arsenal ${aG}–${oG} ${opp}</span>`);
+          });
+        }
+
+        // Next match
+        if (fixtureRes.status === 'fulfilled') {
+          const m = fixtureRes.value.matches?.[0];
+          if (m) {
+            const isHome  = m.homeTeam.id === ARSENAL_ID;
+            const opp     = (isHome ? m.awayTeam : m.homeTeam).shortName || (isHome ? m.awayTeam : m.homeTeam).name;
+            const dateStr = new Date(m.utcDate).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+            items.push(`<span class="ticker-item ticker-next">🔴 Next: ${isHome ? 'vs' : '@'} ${opp} · ${dateStr}</span>`);
+          }
+        }
+
+        // News headlines from Arseblog
+        if (newsRes.status === 'fulfilled') {
+          (newsRes.value.items || []).slice(0, 6).forEach(a => {
+            items.push(`<span class="ticker-item">📰 ${a.title}</span>`);
+          });
+        }
+
+        if (!items.length) {
+          el.innerHTML = '<span class="ticker-item">Arsenal FC · Come On You Gunners</span>';
+          return;
+        }
+
+        // Interleave separators then duplicate for seamless infinite loop
+        const content = items.join(sep());
+        el.innerHTML  = content + sep() + content;
+
+        // Scale duration to content length so scroll speed stays consistent (~10 chars/sec)
+        const charLen = el.textContent.length / 2;
+        el.style.animationDuration = Math.max(40, Math.round(charLen * 0.12)) + 's';
+
+      } catch {
+        el.innerHTML = '<span class="ticker-item">Arsenal FC · Come On You Gunners</span>';
+      }
     }
 
     // ================================================================
@@ -2197,6 +2326,7 @@
 
       try {
         await Promise.allSettled([
+          loadTicker(),
           loadNextMatch(),
           loadStandings(),
           loadFixtures(),
