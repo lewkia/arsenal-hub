@@ -411,60 +411,6 @@
       margin-bottom: 1.1rem;
     }
 
-    /* Competitions card */
-    .comp-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem;
-      margin-top: 1rem;
-    }
-    .comp-card-title {
-      font-size: var(--text-sm);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--secondary);
-      margin-bottom: 0.75rem;
-    }
-    .comp-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.6rem;
-    }
-    @media (max-width: 480px) {
-      .comp-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    .comp-tile {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.75rem 0.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.3rem;
-      text-align: center;
-    }
-    .comp-emblem {
-      width: 30px;
-      height: 30px;
-      object-fit: contain;
-    }
-    .comp-name {
-      font-size: 0.62rem;
-      font-weight: 700;
-      color: var(--secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .comp-status {
-      font-size: var(--text-sm);
-      font-weight: 600;
-    }
-    .comp-active { color: #4ade80; }
-    .comp-out    { color: var(--secondary); }
-    .comp-none   { color: var(--secondary); opacity: 0.5; }
 
     .live-badge {
       display: inline-flex;
@@ -1269,7 +1215,6 @@
       <div id="next-match-container" aria-live="polite">
         <div class="loading"><div class="skel-line"></div><div class="skel-line skel-sm"></div><div class="skel-line skel-med"></div><div class="skel-line skel-sm"></div></div>
       </div>
-      <div id="competitions-container"></div>
     </section>
 
     <!-- -------------------------------------------------------
@@ -1606,110 +1551,6 @@
       } catch {
         el.innerHTML = '<span class="ticker-item">Arsenal FC · Come On You Gunners</span>';
       }
-    }
-
-    // ================================================================
-    // COMPETITIONS STATUS CARD
-    // Fetch: /teams/57/matches?status=SCHEDULED&limit=20
-    //        /teams/57/matches?status=FINISHED&limit=20
-    // ================================================================
-    async function loadCompetitions() {
-      const el = document.getElementById('competitions-container');
-
-      const COMPS = [
-        { code: 'PL',  short: 'EPL',     name: 'Premier League',    knockout: false },
-        { code: 'CL',  short: 'UCL',     name: 'Champions League',  knockout: true  },
-        { code: 'FAC', short: 'FA Cup',  name: 'FA Cup',            knockout: true  },
-        { code: 'ELC', short: 'EFL Cup', name: 'EFL Cup',           knockout: true  },
-      ];
-
-      const KNOCKOUT_STAGES = new Set([
-        'LAST_32','LAST_16','ROUND_OF_16','QUARTER_FINALS','SEMI_FINALS','FINAL','THIRD_PLACE'
-      ]);
-      const LEAGUE_STAGES = new Set([
-        'REGULAR_SEASON','LEAGUE_PHASE','GROUP_STAGE'
-      ]);
-
-      function fmtStage(stage, matchday) {
-        if (!stage) return matchday ? `Matchday ${matchday}` : 'Active';
-        if (LEAGUE_STAGES.has(stage)) return matchday ? `Matchday ${matchday}` : 'Active';
-        const map = {
-          LAST_32: 'Round of 32', LAST_16: 'Round of 16', ROUND_OF_16: 'Round of 16',
-          QUARTER_FINALS: 'Quarter-final', SEMI_FINALS: 'Semi-final',
-          FINAL: 'Final', THIRD_PLACE: '3rd Place',
-          ROUND_1: 'Round 1', ROUND_2: 'Round 2', ROUND_3: 'Round 3',
-          ROUND_4: 'Round 4', ROUND_5: 'Round 5',
-          THIRD_ROUND: 'Round 3', FOURTH_ROUND: 'Round 4', FIFTH_ROUND: 'Round 5',
-        };
-        return map[stage] || stage.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-      }
-
-      try {
-        const [scheduledRes, finishedRes] = await Promise.allSettled([
-          apiFetch(`/teams/${ARSENAL_ID}/matches?status=SCHEDULED&limit=20`),
-          apiFetch(`/teams/${ARSENAL_ID}/matches?status=FINISHED&limit=20`),
-        ]);
-
-        const scheduled = scheduledRes.status === 'fulfilled' ? (scheduledRes.value.matches || []) : [];
-        const finished  = finishedRes.status  === 'fulfilled' ? (finishedRes.value.matches  || []) : [];
-
-        // Build emblem map from match data
-        const emblems = {};
-        [...scheduled, ...finished].forEach(m => {
-          if (m.competition?.code && m.competition?.emblem) {
-            emblems[m.competition.code] = m.competition.emblem;
-          }
-        });
-
-        const tiles = COMPS.map(comp => {
-          const upcoming = scheduled.filter(m => m.competition.code === comp.code);
-          const past     = [...finished].reverse().filter(m => m.competition.code === comp.code);
-          const emblem   = emblems[comp.code];
-
-          let statusCls  = 'comp-none';
-          let statusLine = 'Not Entered';
-
-          if (upcoming.length > 0) {
-            const next = upcoming[0];
-            statusCls  = 'comp-active';
-            statusLine = fmtStage(next.stage, next.matchday);
-          } else if (past.length > 0) {
-            const last   = past[0];
-            const isHome = last.homeTeam.id === ARSENAL_ID;
-            const aG     = isHome ? last.score.fullTime.home : last.score.fullTime.away;
-            const oG     = isHome ? last.score.fullTime.away : last.score.fullTime.home;
-
-            if (!comp.knockout) {
-              statusCls  = 'comp-active';
-              statusLine = fmtStage(last.stage, last.matchday);
-            } else if (KNOCKOUT_STAGES.has(last.stage) && aG > oG) {
-              statusCls  = 'comp-active';
-              statusLine = '🏆 Winners';
-            } else {
-              statusCls  = 'comp-out';
-              statusLine = 'Eliminated';
-            }
-          }
-
-          const emblemHtml = emblem
-            ? `<img src="${emblem}" class="comp-emblem" alt="${comp.name}" onerror="this.style.display='none'">`
-            : '';
-
-          return `
-            <div class="comp-tile">
-              ${emblemHtml}
-              <span class="comp-name">${comp.short}</span>
-              <span class="comp-status ${statusCls}">${statusLine}</span>
-            </div>`;
-        }).join('');
-
-        el.innerHTML = `
-          <div class="comp-card">
-            <div class="comp-card-title">Season Competitions</div>
-            <div class="comp-grid">${tiles}</div>
-          </div>`;
-
-      } catch { el.innerHTML = ''; }
     }
 
     // ================================================================
@@ -2472,7 +2313,6 @@
       try {
         await Promise.allSettled([
           loadTicker(),
-          loadCompetitions(),
           loadNextMatch(),
           loadStandings(),
           loadFixtures(),
