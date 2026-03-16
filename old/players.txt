@@ -46,7 +46,7 @@ DEFENDERS
     Contract Until: Jun 2028
     Market Value: ~£38M
 
-#5  Piero Hincapie  [ON LOAN IN - from Bayer Leverkusen | Buy option activated ~£45M]
+#5  Piero Hincapie  [ON LOAN IN - from Bayer Leverkusen | Buy option ~£45M]
     Age: 23 | Nationality: Ecuadorian
     Contract Until: Jun 2026 (loan expiry)
     Market Value: ~£34M
@@ -65,6 +65,11 @@ DEFENDERS
     Age: 24 | Nationality: Polish
     Contract Until: Jun 2028
     Market Value: ~£17M
+
+#17 Oleksandr Zinchenko  [ON LOAN OUT - Nottingham Forest]
+    Age: 28 | Nationality: Ukrainian
+    Contract Until: Jun 2027
+    Market Value: ~£13M
 
 #33 Riccardo Calafiori
     Age: 22 | Nationality: Italian
@@ -164,16 +169,12 @@ FORWARDS / ATTACKING MIDFIELDERS
     Contract Until: Jun 2028
     Market Value: ~£55M
 
-#56 Max Dowman
-    Age: 16 | Nationality: English
-    Contract Until: Dec 2026  [Pre-contract agreement signed Mar 2026]
-    Market Value: ~£17M
-
 -------------------------------------------
 LOANS OUT (still Arsenal-registered)
 -------------------------------------------
 #31 Karl Hein        - Werder Bremen (GK)
 #15 Jakub Kiwior     - FC Porto (DEF)
+#17 Zinchenko        - Nottingham Forest (DEF/MID)
 #21 Fabio Vieira     - Hamburg (MID/FWD)
 #24 Reiss Nelson     - Brentford (FWD)
 
@@ -195,11 +196,10 @@ KEY CONTRACT & SQUAD NOTES
 - Martin Zubimendi: Signed summer 2025 from Real Sociedad, wears #36
 - Noni Madueke:     Signed summer 2025 from Chelsea, wears #20
 - Cristhian Mosquera:Signed summer 2025 from Valencia, wears #3
-- Piero Hincapie:   Season-long loan from Bayer Leverkusen - personal terms agreed ahead of permanent transfer, wears #5
+- Piero Hincapie:   Season-long loan from Bayer Leverkusen, wears #5
 - Albert Sambi Lokonga (#28): Sold permanently to Hamburg (no longer in squad)
-- Max Dowman (#56):  Pre-contract agreement signed Mar 2026, wears #56
 - Shirt #10 previously vacant; now held by Eberechi Eze
-- #28 effectively unused at Arsenal this season (holder sold)
+- #17 and #28 effectively unused at Arsenal this season (holders away/sold)
 
 -------------------------------------------
 END OF FILE
