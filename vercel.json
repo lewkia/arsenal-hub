@@ -1,9 +1,12 @@
 {
   "outputDirectory": ".",
-  "rewrites": [
-    {
-      "source": "/api/football/:path*",
-      "destination": "https://api.football-data.org/v4/:path*"
+  "functions": {
+    "api/football/[...path].js": {
+      "memory": 128,
+      "maxDuration": 10
     }
+  },
+  "rewrites": [
+    { "source": "/api/football/:path*", "destination": "/api/football/[...path]" }
   ]
 }
